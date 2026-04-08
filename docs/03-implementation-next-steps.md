@@ -21,6 +21,8 @@
 
 ### 1. 입력 스키마 확정
 
+- 현재 프로토타입 입력 스키마는 `URS_SmartFactory_ConceptualDesign_v2.xlsx`를 기준으로 7개 입력 군으로 재구성했다.
+- 상세 매핑은 `docs/04-input-schema-from-urs.md` 참고
 - 어떤 Excel 템플릿을 표준으로 삼을지 결정
 - 시트 이름, 컬럼명, 필수 입력값 정의
 - 폼 입력과 Excel 컬럼 매핑 표 작성
