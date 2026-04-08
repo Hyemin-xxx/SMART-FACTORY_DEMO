@@ -353,6 +353,10 @@ textarea {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.panel-span-2 {
+  grid-column: 1 / -1;
+}
+
 .panel {
   border-radius: var(--radius-xl);
   padding: 26px;
@@ -372,6 +376,17 @@ textarea {
 
 .panel h2 {
   font-size: 1.4rem;
+}
+
+.switch-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.72);
+  color: var(--muted);
 }
 
 .input-methods {
@@ -472,6 +487,183 @@ textarea {
   gap: 18px;
 }
 
+.schema-form {
+  gap: 20px;
+}
+
+.schema-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: start;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 253, 248, 0.74);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.stat-card,
+.highlight-pill {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(255, 253, 248, 0.72);
+}
+
+.stat-card {
+  padding: 16px;
+}
+
+.stat-card span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.stat-card strong {
+  display: block;
+  line-height: 1.4;
+}
+
+.highlight-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.highlight-pill {
+  padding: 11px 14px;
+  color: var(--text);
+}
+
+.accordion-list {
+  display: grid;
+  gap: 14px;
+}
+
+.accordion-item {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 253, 248, 0.74);
+  overflow: hidden;
+}
+
+.accordion-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  padding: 18px 20px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.accordion-summary::-webkit-details-marker {
+  display: none;
+}
+
+.accordion-sheet,
+.accordion-count,
+.field-meta {
+  display: block;
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.accordion-summary strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 1.05rem;
+}
+
+.accordion-count {
+  white-space: nowrap;
+}
+
+.accordion-body {
+  padding: 0 20px 20px;
+  border-top: 1px solid rgba(17, 41, 31, 0.08);
+}
+
+.schema-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.schema-field {
+  padding: 18px;
+  border: 1px solid rgba(17, 41, 31, 0.08);
+  border-radius: var(--radius-md);
+  background: rgba(255, 252, 246, 0.92);
+}
+
+.schema-field h3 {
+  margin: 10px 0 8px;
+  font-size: 1rem;
+}
+
+.schema-field p {
+  margin: 0 0 14px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.schema-input,
+.schema-textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 253, 248, 0.88);
+  padding: 13px 15px;
+  color: var(--text);
+}
+
+.schema-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.choice-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.choice-pill {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(17, 41, 31, 0.14);
+  background: rgba(255, 253, 248, 0.92);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+.choice-pill:hover {
+  transform: translateY(-1px);
+}
+
+.choice-pill.is-active {
+  background: var(--bg-strong);
+  color: var(--white);
+  border-color: var(--bg-strong);
+}
+
 .form-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -520,6 +712,10 @@ textarea {
   width: 100%;
   border-collapse: collapse;
   min-width: 680px;
+}
+
+.sheet-table-wide {
+  min-width: 1080px;
 }
 
 .sheet-table th,
@@ -641,7 +837,8 @@ textarea {
   .workspace-header,
   .feature-grid,
   .timeline,
-  .upload-grid {
+  .upload-grid,
+  .schema-grid {
     grid-template-columns: 1fr;
   }
 
@@ -675,7 +872,14 @@ textarea {
   .input-methods,
   .form-grid,
   .toggle-grid,
-  .result-columns {
+  .result-columns,
+  .stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  .schema-toolbar,
+  .accordion-summary {
+    flex-direction: column;
+    align-items: start;
   }
 }

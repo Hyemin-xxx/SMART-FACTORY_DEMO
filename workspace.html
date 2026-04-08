@@ -24,15 +24,16 @@
         <section class="workspace-header">
           <div>
             <p class="eyebrow">CCD PACKAGE BUILDER</p>
-            <h1>입력 데이터를 정리하고 CCD 패키지 초안을 생성하세요</h1>
+            <h1>URS 시트 기반으로 Smart Factory 개념설계 입력 스키마를 정리하세요</h1>
             <p>
-              현재 버전은 입력 구조 협의용 프로토타입입니다. 실제 엑셀 파싱과 LLM 응답 대신, 사용자가
-              입력한 조건을 기반으로 결과 패키지 초안을 생성합니다.
+              첨부된 <strong>URS_SmartFactory_ConceptualDesign_v2.xlsx</strong> 구조를 바탕으로 입력 항목을
+              재정리했습니다. 아코디언 섹션을 열어 직접 입력하거나 업로드 파일과 함께 하이브리드 방식으로
+              CCD 패키지 초안을 만들 수 있습니다.
             </p>
           </div>
           <div class="status-card">
-            <span>Prototype Mode</span>
-            <strong>Excel schema and LLM prompt are decoupled for rapid discussion.</strong>
+            <span>Workbook-Based Schema</span>
+            <strong>28개 시트의 핵심 질문을 프로토타입 입력 구조로 재구성했습니다.</strong>
           </div>
         </section>
 
@@ -50,17 +51,17 @@
               <label class="choice-card">
                 <input type="radio" name="inputMethod" value="upload" checked />
                 <span>파일 업로드 중심</span>
-                <small>엑셀 원본을 올리고 일부 옵션만 보완</small>
+                <small>엑셀 원본을 업로드하고 선택된 항목만 보완</small>
               </label>
               <label class="choice-card">
                 <input type="radio" name="inputMethod" value="hybrid" />
                 <span>하이브리드</span>
-                <small>업로드 + 폼 입력을 동시에 사용</small>
+                <small>업로드 + 아코디언 입력을 함께 사용</small>
               </label>
               <label class="choice-card">
                 <input type="radio" name="inputMethod" value="form" />
                 <span>직접 입력 중심</span>
-                <small>구조화된 질문에 답변해서 시트 생성</small>
+                <small>URS 질문 구조를 화면에서 단계적으로 입력</small>
               </label>
             </div>
 
@@ -97,77 +98,44 @@
             <div class="panel-heading">
               <div>
                 <p class="eyebrow">STEP 2</p>
-                <h2>옵션 입력</h2>
+                <h2>입력 스키마 범위</h2>
+              </div>
+              <label class="switch-inline">
+                <input id="expandAllToggle" type="checkbox" />
+                <span>모든 섹션 펼치기</span>
+              </label>
+            </div>
+
+            <p class="panel-copy">
+              첨부된 URS의 핵심 질문을 바로 논의 가능한 수준으로 묶었습니다. 시트 전체를 그대로 노출하기보다,
+              실제 개념설계 논의에서 자주 비교할 질문을 대분류 아코디언으로 재배치했습니다.
+            </p>
+
+            <div class="stats-grid" id="schemaStats"></div>
+            <div class="highlight-list" id="schemaHighlights"></div>
+          </article>
+        </section>
+
+        <section class="workspace-grid">
+          <article class="panel panel-span-2">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">STEP 3</p>
+                <h2>시트 기반 직접 입력</h2>
               </div>
             </div>
 
-            <form id="configForm" class="config-form">
-              <div class="form-grid">
-                <label>
-                  <span>프로젝트 명</span>
-                  <input name="projectName" type="text" placeholder="예: ADC Pilot Facility" />
-                </label>
-                <label>
-                  <span>생산 제품</span>
-                  <input name="productType" type="text" placeholder="예: Monoclonal Antibody" />
-                </label>
-                <label>
-                  <span>시설 규모</span>
-                  <select name="facilityScale">
-                    <option value="Pilot">Pilot</option>
-                    <option value="Clinical">Clinical</option>
-                    <option value="Commercial">Commercial</option>
-                  </select>
-                </label>
-                <label>
-                  <span>배치 전략</span>
-                  <select name="batchStrategy">
-                    <option value="Fed-batch">Fed-batch</option>
-                    <option value="Perfusion">Perfusion</option>
-                    <option value="Continuous">Continuous</option>
-                  </select>
-                </label>
-                <label>
-                  <span>주요 클린룸 등급</span>
-                  <select name="cleanroomGrade">
-                    <option value="Grade C">Grade C</option>
-                    <option value="Grade B">Grade B</option>
-                    <option value="Grade A/B">Grade A/B</option>
-                  </select>
-                </label>
-                <label>
-                  <span>목표 산출물</span>
-                  <input name="targetOutput" type="text" placeholder="예: CCD package + utility summary" />
-                </label>
+            <form id="configForm" class="config-form schema-form">
+              <div class="schema-toolbar">
+                <div>
+                  <strong>Workbook Source</strong>
+                  <p class="panel-copy">
+                    <code>URS_SmartFactory_ConceptualDesign_v2.xlsx</code> 기준. 각 아코디언은 원본 시트 번호와 질문군을
+                    표시합니다.
+                  </p>
+                </div>
               </div>
-
-              <div class="toggle-grid">
-                <label class="toggle-card">
-                  <input name="includeUtilities" type="checkbox" checked />
-                  <span>유틸리티 계획 포함</span>
-                </label>
-                <label class="toggle-card">
-                  <input name="includeEquipment" type="checkbox" checked />
-                  <span>주요 장비 리스트 포함</span>
-                </label>
-                <label class="toggle-card">
-                  <input name="includeSingleUse" type="checkbox" checked />
-                  <span>Single-use 전략 반영</span>
-                </label>
-                <label class="toggle-card">
-                  <input name="includeAutomation" type="checkbox" />
-                  <span>자동화 수준 제안</span>
-                </label>
-              </div>
-
-              <label class="textarea-field">
-                <span>설계 메모 / 특이사항</span>
-                <textarea
-                  name="designNotes"
-                  rows="5"
-                  placeholder="예: 멀티프로덕트 가능성, upstream/downstream 분리, 초기 가정 조건 등"
-                ></textarea>
-              </label>
+              <div id="schemaSections" class="accordion-list"></div>
             </form>
           </article>
         </section>
@@ -176,21 +144,24 @@
           <article class="panel panel-wide">
             <div class="panel-heading">
               <div>
-                <p class="eyebrow">STEP 3</p>
+                <p class="eyebrow">STEP 4</p>
                 <h2>시트형 입력 미리보기</h2>
               </div>
-              <span class="sheet-chip">방식 1 프로토타입</span>
+              <span class="sheet-chip">Workbook-linked Preview</span>
             </div>
             <p class="panel-copy">
-              실제 엑셀 연동 전 단계로, 화면에서 주요 입력값을 시트 형태로 확인하고 바로 수정할 수 있게 구성했습니다.
+              아코디언 입력값은 아래 시트형 테이블로 즉시 정리됩니다. 값 셀을 직접 수정해도 원본 폼 상태와
+              연동되도록 구성했습니다.
             </p>
             <div class="sheet-wrapper">
-              <table class="sheet-table">
+              <table class="sheet-table sheet-table-wide">
                 <thead>
                   <tr>
+                    <th>Sheet</th>
+                    <th>Section</th>
                     <th>Field</th>
                     <th>Value</th>
-                    <th>Notes</th>
+                    <th>Guide</th>
                   </tr>
                 </thead>
                 <tbody id="sheetBody"></tbody>
@@ -201,7 +172,7 @@
           <article class="panel panel-wide" id="result">
             <div class="panel-heading">
               <div>
-                <p class="eyebrow">STEP 4</p>
+                <p class="eyebrow">STEP 5</p>
                 <h2>CCD 패키지 초안 생성</h2>
               </div>
               <button id="generateButton" class="button button-primary" type="button">결과 생성하기</button>
@@ -210,7 +181,7 @@
             <div class="result-shell" id="resultShell">
               <div class="result-placeholder">
                 <h3>결과물이 아직 생성되지 않았습니다.</h3>
-                <p>파일을 업로드하거나 옵션을 입력한 뒤, CCD 패키지 초안을 생성해보세요.</p>
+                <p>워크북 기반 입력 항목을 채운 뒤, CCD 패키지 초안을 생성해보세요.</p>
               </div>
             </div>
 
