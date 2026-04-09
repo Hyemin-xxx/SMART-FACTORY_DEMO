@@ -667,7 +667,7 @@ const GRADE_PARTICLE_COLORS = {
 
 class HepaParticleSystem {
   constructor() {
-    this.maxParticles = 900;
+    this.maxParticles = 2700;
     this.particles = [];
     this.spawnAccumulator = 0;
     this.facility = null;
@@ -733,8 +733,8 @@ class HepaParticleSystem {
   update(dt) {
     if (!this.facility) return;
 
-    // Spawn rate ~ ACH-weighted, simplified to ~30/sec total
-    this.spawnAccumulator += dt * 30;
+    // Spawn rate ~ ACH-weighted, simplified to ~90/sec total (3x denser flow)
+    this.spawnAccumulator += dt * 90;
     while (this.spawnAccumulator >= 1) {
       this.spawn();
       this.spawnAccumulator -= 1;
