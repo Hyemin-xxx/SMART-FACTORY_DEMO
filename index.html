@@ -4,105 +4,292 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BioForge CCD Studio</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link
+      rel="stylesheet"
+      as="style"
+      crossorigin
+      href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body data-page="home">
-    <div class="page-shell">
-      <header class="topbar">
-        <a class="brand" href="./index.html">
-          <span class="brand-mark">BF</span>
-          <span>BioForge CCD Studio</span>
+    <div class="page-shell page-shell-home">
+      <header class="topbar topbar-home">
+        <a class="brand brand-home" href="./index.html" aria-label="BioForge CCD Studio Home">
+          <span class="brand-mark brand-mark-home" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" role="presentation">
+              <path
+                d="M12 3L13.89 8.11L19 10L13.89 11.89L12 17L10.11 11.89L5 10L10.11 8.11L12 3Z"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </span>
+          <span class="brand-lockup">
+            <strong>BioForge CCD Studio</strong>
+            <small>Concept Design Workspace</small>
+          </span>
         </a>
-        <nav class="nav">
-          <a href="#service">서비스</a>
-          <a href="#flow">프로세스</a>
-          <a href="./workspace.html" class="nav-cta">프로토타입 열기</a>
+
+        <nav class="nav nav-home" aria-label="Primary">
+          <a class="nav-pill" href="#overview">Overview</a>
+          <a class="nav-pill" href="#workflow">Workflow</a>
+          <a class="nav-pill" href="./workspace.html">Workspace</a>
+          <a class="nav-pill" href="./ccd-viewer.html">3D Viewer</a>
         </nav>
+
+        <div class="nav-actions">
+          <a class="button button-home-outline" href="./ccd-viewer.html">Open 3D Viewer</a>
+          <a class="button button-home-primary" href="./workspace.html">Open Workspace</a>
+        </div>
       </header>
 
-      <main>
-        <section class="hero">
-          <div class="hero-copy">
-            <p class="eyebrow">BIOPROCESS CONCEPT DESIGN AUTOMATION</p>
-            <h1>엑셀과 입력 폼만으로<br />CCD 패키지를 자동 생성하는 제조라인 설계 워크스페이스</h1>
-            <p class="hero-text">
-              바이오공정 제조라인 개념설계 데이터를 업로드하거나 직접 입력하면, LLM이 핵심 조건을
-              정리하고 CCD 패키지 형태의 결과물을 제안하는 서비스 프로토타입입니다.
+      <main class="home-main">
+        <section class="hero hero-home" id="home">
+          <div class="hero-layout">
+            <div class="hero-copy hero-copy-home">
+              <span class="hero-badge">Smart Factory / Bioprocess CCD</span>
+              <h1>From raw process inputs to a draft CCD package.</h1>
+              <p class="hero-text">
+                엑셀 업로드나 직접 입력만으로 바이오공정 개념설계 데이터를 정리하고, CCD 패키지 초안을
+                빠르게 검토할 수 있는 워크스페이스입니다.
+              </p>
+              <div class="hero-actions hero-actions-home">
+                <a class="button button-home-primary button-home-large" href="./workspace.html">입력 워크스페이스 열기</a>
+                <a class="button button-home-outline button-home-large" href="#workflow">프로세스 보기</a>
+              </div>
+
+              <div class="hero-meta">
+                <article class="hero-meta-card">
+                  <strong>Hybrid Input</strong>
+                  <span>Excel 업로드와 폼 입력을 같은 흐름에서 함께 검토</span>
+                </article>
+                <article class="hero-meta-card">
+                  <strong>Readable Draft</strong>
+                  <span>설계팀이 바로 읽고 리뷰할 수 있는 CCD 초안 구조 제안</span>
+                </article>
+                <article class="hero-meta-card">
+                  <strong>Fast Validation</strong>
+                  <span>초기 협의 단계에서 입력 방식과 결과 포맷을 빠르게 검증</span>
+                </article>
+              </div>
+            </div>
+
+            <div class="hero-preview">
+              <div class="preview-window">
+                <div class="preview-toolbar" aria-hidden="true">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+
+                <div class="preview-content">
+                  <div class="preview-heading">
+                    <p class="eyebrow eyebrow-home">Workspace Preview</p>
+                    <h2>오늘 무엇을 설계할까요?</h2>
+                    <p>
+                      프로젝트 정보, 설비 규모, 주요 요구사항을 정리하면 바로 CCD 초안 워크플로우로
+                      이어집니다.
+                    </p>
+                  </div>
+
+                  <div class="prompt-card">
+                    <textarea
+                      class="studio-input"
+                      rows="6"
+                      placeholder="프로젝트 명, 설비 규모, 주요 요구사항을 입력하거나 엑셀 파일을 업로드하세요"
+                    ></textarea>
+
+                    <div class="studio-toolbar">
+                      <button class="toolbar-button toolbar-button-attach" type="button">
+                        <span aria-hidden="true">
+                          <svg viewBox="0 0 24 24" fill="none" role="presentation">
+                            <path
+                              d="M8.75 12.25L13.75 7.25C14.99 6.01 17.01 6.01 18.25 7.25C19.49 8.49 19.49 10.51 18.25 11.75L11.18 18.82C9.48 20.52 6.72 20.52 5.02 18.82C3.33 17.12 3.33 14.38 5.02 12.68L11.2 6.5"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </span>
+                        <span>Attach</span>
+                      </button>
+
+                      <div class="toolbar-right">
+                        <button class="toolbar-pill" type="button">Claude Sonnet</button>
+                        <button class="send-button" type="button" aria-label="Send">
+                          <svg viewBox="0 0 24 24" fill="none" role="presentation">
+                            <path
+                              d="M12 18V6"
+                              stroke="currentColor"
+                              stroke-width="1.8"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                            <path
+                              d="M7 11L12 6L17 11"
+                              stroke="currentColor"
+                              stroke-width="1.8"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="template-area">
+                    <p class="template-label">Quick templates</p>
+                    <div class="template-grid home-template-grid">
+                      <button class="template-card" type="button">
+                        <span class="template-card-title">URS 기반 입력 시작</span>
+                        <span class="template-card-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" fill="none" role="presentation">
+                            <path
+                              d="M5 6.5H19V17.5H5V6.5Z"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              stroke-linejoin="round"
+                            />
+                            <path d="M8 10H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                            <path d="M8 14H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                          </svg>
+                        </span>
+                      </button>
+                      <button class="template-card" type="button">
+                        <span class="template-card-title">스키마 범위 설정</span>
+                        <span class="template-card-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" fill="none" role="presentation">
+                            <path
+                              d="M12 8.5A3.5 3.5 0 1 0 12 15.5A3.5 3.5 0 1 0 12 8.5Z"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                            />
+                            <path
+                              d="M19 12C19 11.48 18.95 10.97 18.85 10.48L21 8.86L18.86 5.14L16.35 6.15C15.57 5.52 14.65 5.08 13.68 4.87L13.32 2H10.68L10.32 4.87C9.35 5.08 8.43 5.52 7.65 6.15L5.14 5.14L3 8.86L5.15 10.48C5.05 10.97 5 11.48 5 12C5 12.52 5.05 13.03 5.15 13.52L3 15.14L5.14 18.86L7.65 17.85C8.43 18.48 9.35 18.92 10.32 19.13L10.68 22H13.32L13.68 19.13C14.65 18.92 15.57 18.48 16.35 17.85L18.86 18.86L21 15.14L18.85 13.52C18.95 13.03 19 12.52 19 12Z"
+                              stroke="currentColor"
+                              stroke-width="1.2"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </span>
+                      </button>
+                      <button class="template-card" type="button">
+                        <span class="template-card-title">CCD 초안 생성</span>
+                        <span class="template-card-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" fill="none" role="presentation">
+                            <circle cx="10.5" cy="10.5" r="5.5" stroke="currentColor" stroke-width="1.5" />
+                            <path d="M15 15L19 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                          </svg>
+                        </span>
+                      </button>
+                      <button class="template-card" type="button">
+                        <span class="template-card-title">결과 다운로드</span>
+                        <span class="template-card-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" fill="none" role="presentation">
+                            <path d="M12 4V14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                            <path
+                              d="M8 10.5L12 14.5L16 10.5"
+                              stroke="currentColor"
+                              stroke-width="1.6"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                            <path d="M5 19H19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                          </svg>
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section home-section value-section" id="overview">
+          <div class="section-heading home-heading">
+            <p class="eyebrow eyebrow-home">Overview</p>
+            <h2>설계 검토에 필요한 핵심 구조만 먼저 보여주는 shadcn 스타일 랜딩</h2>
+            <p>
+              카드, 타이포, 보더, 여백 체계를 정리해서 화면이 덜 어수선하고 더 제품처럼 보이도록
+              재구성했습니다.
             </p>
-            <div class="hero-actions">
-              <a class="button button-primary" href="./workspace.html">입력 워크스페이스로 이동</a>
-              <a class="button button-secondary" href="#flow">작동 방식 보기</a>
-            </div>
           </div>
 
-          <div class="hero-panel">
-            <div class="hero-card hero-card-spotlight">
-              <span class="hero-card-label">입력 방식</span>
-              <strong>Drag & Drop / Local File / Google Drive / Direct Form</strong>
-              <p>엑셀 원본이 아직 고정되지 않아도, 동일 화면에서 실험적으로 입력 구조를 비교할 수 있습니다.</p>
-            </div>
-            <div class="hero-grid">
-              <article class="hero-card">
-                <span class="hero-card-label">LLM 분석</span>
-                <strong>공정 조건 정규화</strong>
-                <p>배치 규모, 유틸리티, 주요 장비, 클린룸 요구사항을 CCD 관점으로 요약합니다.</p>
-              </article>
-              <article class="hero-card">
-                <span class="hero-card-label">산출물</span>
-                <strong>CCD Package Draft</strong>
-                <p>설계 요약, 주요 assumptions, 필요 deliverables, 채워진 입력 시트까지 한번에 정리합니다.</p>
-              </article>
-            </div>
-          </div>
-        </section>
+          <div class="home-value-grid">
+            <article class="home-feature-card">
+              <span class="feature-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" role="presentation">
+                  <path d="M6 7H18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                  <path d="M6 12H18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                  <path d="M6 17H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+              </span>
+              <h3>정돈된 정보 구조</h3>
+              <p>첫 화면에서 메시지, 액션, 미리보기가 분리되어 보여서 어디를 봐야 할지 바로 이해할 수 있습니다.</p>
+            </article>
 
-        <section class="section" id="service">
-          <div class="section-heading">
-            <p class="eyebrow">SERVICE VALUE</p>
-            <h2>초기 협의 단계에서도 바로 검증 가능한 입력-출력 경험</h2>
-          </div>
-          <div class="feature-grid">
-            <article class="feature-card">
-              <h3>유연한 입력 구조</h3>
-              <p>엑셀 파일이 정해지지 않았더라도, 업로드와 폼 입력을 병행해 어떤 인터페이스가 더 적합한지 검토할 수 있습니다.</p>
+            <article class="home-feature-card">
+              <span class="feature-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" role="presentation">
+                  <path
+                    d="M5 8.5C5 7.12 6.12 6 7.5 6H16.5C17.88 6 19 7.12 19 8.5V15.5C19 16.88 17.88 18 16.5 18H7.5C6.12 18 5 16.88 5 15.5V8.5Z"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                  />
+                  <path d="M8 10.5H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                  <path d="M8 13.5H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+              </span>
+              <h3>워크스페이스 미리보기</h3>
+              <p>입력 워크플로우를 hero 안에 직접 노출해서 실제 사용 장면이 더 빠르게 상상되도록 했습니다.</p>
             </article>
-            <article class="feature-card">
-              <h3>설계팀 관점의 요약</h3>
-              <p>복잡한 제조 조건을 CCD 패키지 초안 구조에 맞게 정리해, 다음 단계 검토와 협업 속도를 높입니다.</p>
-            </article>
-            <article class="feature-card">
-              <h3>향후 확장 용이성</h3>
-              <p>실제 LLM API, 엑셀 파서, Google Drive 연동이 붙을 수 있도록 단계별 구조를 가볍게 분리했습니다.</p>
+
+            <article class="home-feature-card">
+              <span class="feature-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" role="presentation">
+                  <path d="M12 5V19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                  <path d="M5 12H19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+              </span>
+              <h3>확장 가능한 톤</h3>
+              <p>같은 visual language를 그대로 `workspace.html`까지 이어갈 수 있게 색과 컴포넌트를 다시 정리했습니다.</p>
             </article>
           </div>
         </section>
 
-        <section class="section section-dark" id="flow">
-          <div class="section-heading">
-            <p class="eyebrow">WORKFLOW</p>
-            <h2>프로토타입 사용자 흐름</h2>
+        <section class="section home-section process-section" id="workflow">
+          <div class="section-heading home-heading">
+            <p class="eyebrow eyebrow-home">Workflow</p>
+            <h2>입력 수집부터 CCD 초안 생성까지, 한 줄기 흐름으로 이어집니다</h2>
           </div>
-          <div class="timeline">
-            <article class="timeline-item">
-              <span>01</span>
-              <div>
-                <h3>입력 경로 선택</h3>
-                <p>내 컴퓨터 파일 업로드, Google Drive 가져오기, 직접 옵션 입력 중 필요한 방식을 선택합니다.</p>
-              </div>
+
+          <div class="process-board">
+            <article class="process-step-card">
+              <span class="process-step-index">01</span>
+              <h3>입력 수집</h3>
+              <p>엑셀 업로드와 직접 입력을 병행해 아직 고정되지 않은 데이터 구조도 유연하게 받습니다.</p>
             </article>
-            <article class="timeline-item">
-              <span>02</span>
-              <div>
-                <h3>데이터 정리</h3>
-                <p>시트형 미리보기와 토글형 폼을 통해 프로젝트 조건을 확인하고, 부족한 값을 보완합니다.</p>
-              </div>
+            <article class="process-step-card">
+              <span class="process-step-index">02</span>
+              <h3>핵심 조건 정리</h3>
+              <p>설비 규모, 배치 전략, 유틸리티 요구사항을 CCD 관점의 읽기 쉬운 구조로 정리합니다.</p>
             </article>
-            <article class="timeline-item">
-              <span>03</span>
-              <div>
-                <h3>CCD 패키지 초안 생성</h3>
-                <p>분석 요약, 핵심 설계 요구사항, 예상 산출 문서, 입력 시트 반환용 데이터를 한 화면에 제공합니다.</p>
-              </div>
+            <article class="process-step-card">
+              <span class="process-step-index">03</span>
+              <h3>초안 생성</h3>
+              <p>추천 산출물, 핵심 assumptions, 다음 논의 포인트를 포함한 CCD 초안을 빠르게 제안합니다.</p>
             </article>
           </div>
         </section>
