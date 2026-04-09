@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BioForge CCD Studio · 3D Conceptual Viewer</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link
+      rel="stylesheet"
+      as="style"
+      crossorigin
+      href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body data-page="ccd-viewer">
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="./index.html">
+          <span class="brand-mark">BF</span>
+          <span>BioForge CCD Studio</span>
+        </a>
+        <nav class="nav">
+          <a href="./index.html">홈</a>
+          <a href="./workspace.html">입력 워크스페이스</a>
+          <a href="./ccd-viewer.html" class="nav-cta">3D CCD 뷰어</a>
+        </nav>
+      </header>
+
+      <main class="workspace-main">
+        <section class="workspace-header workspace-hero-card">
+          <div>
+            <p class="eyebrow">ADCC CCD PAGE · 3D CONCEPTUAL DESIGN VIEWER</p>
+            <h1>설계 파라미터를 입력하면 3D 개념 설계가 즉시 솟아오릅니다.</h1>
+            <p>
+              ISPE Baseline Guide Vol 6의 시설 구역(Area)과 주요 설비(Equipment) 구조를 따르는 CCD JSON을
+              Three.js 캔버스에 시각화합니다. 마우스로 회전·줌인/아웃이 가능하며, 향후 LLM이 생성한
+              CCD 응답을 그대로 입력해 렌더링할 수 있도록 설계되었습니다.
+            </p>
+          </div>
+          <div class="status-card ccd-status-card">
+            <span>Three.js Live Preview</span>
+            <strong id="ccdStatusStrong">설계 파라미터를 입력하고 생성 버튼을 눌러 주세요.</strong>
+            <small id="ccdStatusMeta">대기 중 · 모델 미생성</small>
+          </div>
+        </section>
+
+        <section class="ccd-viewer-grid">
+          <article class="panel ccd-controls-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">STEP 1</p>
+                <h2>설계 파라미터</h2>
+              </div>
+              <button id="ccdResetButton" class="ghost-button" type="button">기본값 복원</button>
+            </div>
+            <p class="panel-copy">
+              면적과 공정 타입 같은 핵심 파라미터로 CCD 시드를 만든 뒤, 서버나 LLM에 보낼 payload의 기준이
+              되는 JSON을 즉석에서 갱신합니다.
+            </p>
+
+            <form id="ccdForm" class="config-form ccd-form">
+              <div class="form-grid">
+                <label>
+                  <span>프로젝트 명</span>
+                  <input name="projectName" type="text" value="ADCC Pilot Reference Facility" />
+                </label>
+                <label>
+                  <span>공정 타입</span>
+                  <select name="processType">
+                    <option value="mab">Monoclonal Antibody (mAb)</option>
+                    <option value="adc" selected>Antibody-Drug Conjugate (ADC)</option>
+                    <option value="vaccine">Vaccine</option>
+                    <option value="cellTherapy">Cell Therapy</option>
+                  </select>
+                </label>
+                <label>
+                  <span>총 면적 (m²)</span>
+                  <input name="totalArea" type="number" min="200" max="5000" step="50" value="1200" />
+                </label>
+                <label>
+                  <span>시설 규모</span>
+                  <select name="facilityScale">
+                    <option value="Pilot" selected>Pilot</option>
+                    <option value="Clinical">Clinical</option>
+                    <option value="Commercial">Commercial</option>
+                  </select>
+                </label>
+                <label>
+                  <span>핵심 클린룸 등급</span>
+                  <select name="cleanroomGrade">
+                    <option value="Grade D">Grade D</option>
+                    <option value="Grade C" selected>Grade C</option>
+                    <option value="Grade B">Grade B</option>
+                    <option value="Grade A/B">Grade A/B</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Bioreactor 수량</span>
+                  <input name="bioreactorCount" type="number" min="1" max="6" step="1" value="2" />
+                </label>
+              </div>
+
+              <div class="toggle-grid">
+                <label class="toggle-card">
+                  <input name="includeFill" type="checkbox" checked />
+                  <span>Aseptic Fill / Finish 포함</span>
+                </label>
+                <label class="toggle-card">
+                  <input name="includeBuffer" type="checkbox" checked />
+                  <span>Media / Buffer Prep 포함</span>
+                </label>
+                <label class="toggle-card">
+                  <input name="includeUtilities" type="checkbox" />
+                  <span>Utilities Area 포함</span>
+                </label>
+                <label class="toggle-card">
+                  <input name="includeLyo" type="checkbox" />
+                  <span>Lyophilizer 추가</span>
+                </label>
+              </div>
+            </form>
+
+            <div class="ccd-controls-actions">
+              <button id="ccdGenerateButton" class="button button-primary" type="button">설계 생성</button>
+              <button id="ccdReplayButton" class="ghost-button" type="button">애니메이션 다시 재생</button>
+            </div>
+
+            <div class="ccd-legend">
+              <p class="meta-label">3D 객체 범례</p>
+              <ul>
+                <li><span class="legend-swatch swatch-area"></span>CleanRoom_Wall (반투명 박스)</li>
+                <li><span class="legend-swatch swatch-bioreactor"></span>Bioreactor (원기둥)</li>
+                <li><span class="legend-swatch swatch-chrom"></span>Chromatography / UFDF Skid</li>
+                <li><span class="legend-swatch swatch-fill"></span>Filling Machine / Lyophilizer</li>
+                <li><span class="legend-swatch swatch-buffer"></span>Buffer / Media Tank</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="panel ccd-canvas-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">STEP 2</p>
+                <h2>3D 개념 설계 캔버스</h2>
+              </div>
+              <span class="sheet-chip" id="ccdMetaChip">No model yet</span>
+            </div>
+            <p class="panel-copy">
+              마우스 좌클릭 드래그로 회전, 휠로 줌인/아웃, 우클릭 드래그로 패닝이 가능합니다.
+              생성 직후에는 모든 객체가 바닥에서 솟아오르는 애니메이션이 재생됩니다.
+            </p>
+            <div class="ccd-canvas-shell" id="ccdCanvasShell">
+              <div class="ccd-canvas-overlay" id="ccdCanvasOverlay">
+                <h3>아직 3D 모델이 생성되지 않았습니다.</h3>
+                <p>왼쪽 파라미터를 확인한 뒤 「설계 생성」 버튼을 눌러 주세요.</p>
+              </div>
+            </div>
+
+            <div class="ccd-canvas-meta">
+              <div>
+                <span class="meta-label">Areas</span>
+                <strong id="ccdAreaCount">0</strong>
+              </div>
+              <div>
+                <span class="meta-label">Equipment</span>
+                <strong id="ccdEquipmentCount">0</strong>
+              </div>
+              <div>
+                <span class="meta-label">Footprint</span>
+                <strong id="ccdFootprint">— m × — m</strong>
+              </div>
+              <div>
+                <span class="meta-label">Reference</span>
+                <strong>ISPE Baseline Guide Vol 6</strong>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="workspace-stack">
+          <article class="panel panel-wide">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">STEP 3</p>
+                <h2>CCD JSON 미리보기</h2>
+              </div>
+              <span class="doc-chip">LLM 응답 호환 스키마</span>
+            </div>
+            <p class="panel-copy">
+              현재 화면에 렌더링되는 데이터입니다. 동일한 JSON 구조를 LLM에 요청하면, 응답을 그대로 이
+              뷰어에 주입할 수 있습니다.
+            </p>
+            <pre class="ccd-json-block" id="ccdJsonBlock">{
+  "facility": {
+    "name": "—",
+    "areas": [],
+    "equipment": []
+  }
+}</pre>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./ccd-viewer.js"></script>
+  </body>
+</html>
