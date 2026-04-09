@@ -1,5 +1,24 @@
 # 구현 메모 및 다음 단계
 
+## 2026-04-09 업데이트
+
+오늘 작업에서는 워크스페이스 데모를 단순 입력 화면 수준에서, 실제 서버 왕복과 workbook 파싱이 보이는 흐름으로 확장했다.
+
+이번에 반영한 항목:
+
+- 워크스페이스 입력 구조를 단일 시트에서 `3개 데모 시트` 구조로 재구성
+- 시트별 CSV 다운로드가 가능하도록 변경
+- `server.py`를 추가해 정적 파일 서빙과 `/api/ccd-package` API를 함께 제공
+- 프론트엔드가 mock 결과를 직접 만들지 않고, 서버에 payload를 전송해 CCD 패키지 결과를 받도록 변경
+- 서버 응답으로 CCD conceptual document, Mermaid 공정도, 장비 목록, ROM 예산 요약, open items를 반환
+- `.xlsx` 업로드 시 `/api/parse-workbook`로 파일을 전송하고, 서버에서 시트명과 셀 preview를 읽어 3개 데모 시트로 매핑
+
+현재 기준 의미:
+
+- 이제 흐름은 `frontend only demo`가 아니라 `frontend -> local API server -> generated package response` 구조다.
+- 다만 workbook parsing은 아직 기본적인 zip/xml 기반 preview 수준이며, 실제 URS 템플릿별 정교한 셀 매핑은 다음 단계다.
+- LLM 호출, Word/PDF 산출, 실제 견적 계산은 아직 붙어 있지 않다.
+
 ## 이번 구현에서 의도한 기술적 방향
 
 현재 저장소가 비어 있었기 때문에, 의존성 설치 없이 바로 열어볼 수 있는 정적 프로토타입으로 시작했다.
@@ -34,10 +53,23 @@
 
 ## 현재 구현의 한계
 
-1. `.xlsx` 파일을 실제로 파싱하지 않는다.
+1. `.xlsx` 파일은 현재 기본 zip/xml 파서로 시트명과 일부 셀 미리보기만 읽는다.
 2. Google Drive는 실제 API 연동이 아닌 모의 버튼이다.
-3. LLM 호출 없이 화면 내 규칙 기반 요약만 생성한다.
-4. 결과물은 CCD 패키지 "초안 UI" 수준이며, 문서 포맷 산출까지는 연결되지 않았다.
+3. 현재 서버는 로컬 mock API이며 실제 LLM 호출은 아직 없다.
+4. 결과물은 CCD 패키지 문서형 데모까지 확장되었지만 Word/PDF/Excel 패키지 산출은 아직 연결되지 않았다.
+5. 서버 응답은 규칙 기반으로 생성되며, 실제 견적 엔진이나 비용 DB는 붙어 있지 않다.
+
+## 현재 데모 서버 상태
+
+이번 단계에서 정적 프로토타입에 로컬 API 서버를 추가했다.
+
+- `server.py`가 정적 파일 서빙과 `/api/ccd-package` 엔드포인트를 함께 제공
+- `server.py`가 `/api/parse-workbook` 엔드포인트를 통해 `.xlsx` 시트명/셀 preview를 파싱
+- 프론트엔드 `script.js`는 3개 시트 입력 workbook JSON을 서버로 전송
+- 서버는 CCD conceptual package, Mermaid 공정도, 장비 목록, ROM 예산 요약을 JSON으로 반환
+- 업로드된 workbook은 서버에서 3개 데모 시트 구조로 매핑되어 화면에 반영
+
+즉, 현재는 `frontend mock`이 아니라 `frontend -> local server -> generated response` 흐름까지 연결된 상태다.
 
 ## 다음 단계 권장 순서
 
@@ -108,12 +140,18 @@
 
 ## 실행 방법
 
-정적 파일 기반이므로 브라우저에서 `index.html`을 직접 열어도 되고, 간단한 로컬 서버로 실행해도 된다.
+현재는 API 호출이 포함되어 있으므로 `index.html`을 파일로 직접 여는 방식보다 로컬 서버 실행 방식이 권장된다.
 
 예시:
 
 ```bash
-python3 -m http.server 8000
+python3 server.py
+```
+
+실행 후 브라우저에서 아래 주소로 접속:
+
+```text
+http://127.0.0.1:8000
 ```
 
 ## 로컬 서버 실행 시 `OSError: [Errno 48] Address already in use`가 뜨는 경우

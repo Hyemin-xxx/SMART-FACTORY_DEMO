@@ -467,6 +467,32 @@ textarea {
   background: rgba(255, 253, 248, 0.62);
 }
 
+.source-hint,
+.sheet-export-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.source-hint {
+  grid-template-columns: 1fr;
+}
+
+.source-hint,
+.sheet-export-meta > div {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(255, 253, 248, 0.62);
+}
+
+.source-hint p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
 .config-form {
   display: grid;
   gap: 18px;
@@ -514,6 +540,33 @@ textarea {
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: rgba(255, 253, 248, 0.76);
+}
+
+.sheet-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.sheet-tab {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.72);
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.sheet-tab.is-active {
+  background: var(--bg-strong);
+  color: var(--white);
+  border-color: transparent;
 }
 
 .sheet-table {
@@ -570,6 +623,10 @@ textarea {
   gap: 16px;
 }
 
+.result-layout-docs {
+  gap: 18px;
+}
+
 .result-banner,
 .result-card {
   border-radius: var(--radius-md);
@@ -617,6 +674,181 @@ textarea {
 
 .result-card h3 {
   margin: 0 0 12px;
+}
+
+.result-card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.result-status,
+.doc-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(17, 41, 31, 0.08);
+  color: var(--accent-alt);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.payload-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.payload-grid > div {
+  padding: 14px;
+  border: 1px solid rgba(17, 41, 31, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 253, 248, 0.5);
+}
+
+.document-sections {
+  display: grid;
+  gap: 14px;
+}
+
+.document-section {
+  padding-top: 14px;
+  border-top: 1px solid rgba(17, 41, 31, 0.08);
+}
+
+.document-section:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.document-section h4 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.document-section p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.mermaid-block {
+  margin: 0;
+  overflow-x: auto;
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(17, 41, 31, 0.95);
+  color: rgba(255, 253, 248, 0.92);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.result-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid rgba(17, 41, 31, 0.08);
+  border-radius: 16px;
+  background: rgba(255, 253, 248, 0.5);
+}
+
+.result-table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+}
+
+.result-table th,
+.result-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(17, 41, 31, 0.08);
+  text-align: left;
+}
+
+.result-table th {
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.budget-list {
+  display: grid;
+  gap: 12px;
+}
+
+.budget-item {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px;
+  border: 1px solid rgba(17, 41, 31, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 253, 248, 0.5);
+}
+
+.budget-item p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.budget-item span {
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.result-loading {
+  display: grid;
+  place-items: center;
+  min-height: 320px;
+  text-align: center;
+  gap: 12px;
+}
+
+.result-loading h3,
+.result-loading p {
+  margin: 0;
+}
+
+.result-loading p {
+  max-width: 36rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.result-loading-error h3 {
+  color: #8a2d2d;
+}
+
+.loading-orb-error {
+  background: radial-gradient(circle at 30% 30%, rgba(255, 253, 248, 0.95), rgba(191, 106, 47, 0.92));
+  box-shadow: 0 0 0 8px rgba(191, 106, 47, 0.08);
+}
+
+.loading-orb {
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 253, 248, 0.95), rgba(62, 125, 104, 0.95));
+  box-shadow: 0 0 0 8px rgba(62, 125, 104, 0.08);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(0.96);
+    opacity: 0.85;
+  }
+
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .bullet-list {
@@ -675,7 +907,9 @@ textarea {
   .input-methods,
   .form-grid,
   .toggle-grid,
-  .result-columns {
+  .result-columns,
+  .payload-grid,
+  .sheet-export-meta {
     grid-template-columns: 1fr;
   }
 }
@@ -725,7 +959,7 @@ body[data-page="home"] * {
 body[data-page="home"] .page-shell-home {
   position: relative;
   z-index: 1;
-  width: min(1240px, calc(100% - 32px));
+  width: min(1440px, calc(100% - 32px));
   padding: 18px 0 72px;
 }
 
@@ -866,13 +1100,15 @@ body[data-page="home"] .hero-home {
 
 body[data-page="home"] .hero-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
-  gap: 28px;
+  grid-template-columns: minmax(560px, 1fr) minmax(560px, 1fr);
+  justify-content: space-between;
+  gap: 36px;
   align-items: center;
 }
 
 body[data-page="home"] .hero-copy-home {
-  max-width: 640px;
+  width: 100%;
+  max-width: none;
 }
 
 body[data-page="home"] .hero-badge,
@@ -965,6 +1201,7 @@ body[data-page="home"] .hero-meta-card span {
 
 body[data-page="home"] .hero-preview {
   position: relative;
+  width: 100%;
 }
 
 body[data-page="home"] .hero-preview::before {
@@ -980,6 +1217,8 @@ body[data-page="home"] .preview-window {
   position: relative;
   z-index: 1;
   overflow: hidden;
+  width: 120%;
+  max-width: none;
   border: 1px solid var(--home-border);
   border-radius: 28px;
   background: rgba(255, 255, 255, 0.92);
@@ -1269,7 +1508,7 @@ body[data-page="home"] .process-step-index {
 
 @media (max-width: 780px) {
   body[data-page="home"] .page-shell-home {
-    width: min(100% - 20px, 1240px);
+    width: min(100% - 20px, 1440px);
     padding-top: 12px;
   }
 

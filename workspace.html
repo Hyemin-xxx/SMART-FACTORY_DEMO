@@ -24,15 +24,15 @@
         <section class="workspace-header">
           <div>
             <p class="eyebrow">CCD PACKAGE BUILDER</p>
-            <h1>입력 데이터를 정리하고 CCD 패키지 초안을 생성하세요</h1>
+            <h1>3개 시트 입력을 정리하고 CCD 개념설계 패키지를 생성하세요</h1>
             <p>
-              현재 버전은 입력 구조 협의용 프로토타입입니다. 실제 엑셀 파싱과 LLM 응답 대신, 사용자가
-              입력한 조건을 기반으로 결과 패키지 초안을 생성합니다.
+              현재 버전은 다중 시트 입력과 서버 전송 흐름을 검증하기 위한 데모입니다. 업로드된 워크북을
+              3개 핵심 시트 구조로 축약하고, 서버 응답을 가정한 CCD 개념설계 패키지 문서 화면을 생성합니다.
             </p>
           </div>
           <div class="status-card">
             <span>Prototype Mode</span>
-            <strong>Excel schema and LLM prompt are decoupled for rapid discussion.</strong>
+            <strong>Three-sheet workbook to server-driven CCD package demo.</strong>
           </div>
         </section>
 
@@ -91,13 +91,17 @@
                 <strong id="selectedFileStatus">대기 중</strong>
               </div>
             </div>
+            <div class="source-hint">
+              <span class="meta-label">데모 기준</span>
+              <p>첨부된 URS 워크북처럼 시트가 여러 장이어도, 현재 데모에서는 3개 핵심 시트로 재구성합니다.</p>
+            </div>
           </article>
 
           <article class="panel">
             <div class="panel-heading">
               <div>
                 <p class="eyebrow">STEP 2</p>
-                <h2>옵션 입력</h2>
+                <h2>마스터 입력</h2>
               </div>
             </div>
 
@@ -177,13 +181,19 @@
             <div class="panel-heading">
               <div>
                 <p class="eyebrow">STEP 3</p>
-                <h2>시트형 입력 미리보기</h2>
+                <h2>3개 시트 입력 워크북</h2>
               </div>
-              <span class="sheet-chip">방식 1 프로토타입</span>
+              <span class="sheet-chip" id="activeSheetLabel">Sheet 1 / Project Overview</span>
             </div>
             <p class="panel-copy">
-              실제 엑셀 연동 전 단계로, 화면에서 주요 입력값을 시트 형태로 확인하고 바로 수정할 수 있게 구성했습니다.
+              `Project Overview`, `Process Definition`, `Equipment & Cost` 3개 시트로 입력을 나눠 관리합니다.
+              각 시트는 바로 수정 가능하며, CSV 패키지로 내보낼 수 있습니다.
             </p>
+            <div class="sheet-tabs" id="sheetTabs">
+              <button class="sheet-tab is-active" data-sheet="projectOverview" type="button">Project Overview</button>
+              <button class="sheet-tab" data-sheet="processDefinition" type="button">Process Definition</button>
+              <button class="sheet-tab" data-sheet="equipmentCost" type="button">Equipment & Cost</button>
+            </div>
             <div class="sheet-wrapper">
               <table class="sheet-table">
                 <thead>
@@ -196,27 +206,37 @@
                 <tbody id="sheetBody"></tbody>
               </table>
             </div>
+            <div class="sheet-export-meta">
+              <div>
+                <span class="meta-label">내보내기 형식</span>
+                <strong>CSV x 3 sheets</strong>
+              </div>
+              <div>
+                <span class="meta-label">서버 payload</span>
+                <strong>Workbook JSON + CCD package request</strong>
+              </div>
+            </div>
           </article>
 
           <article class="panel panel-wide" id="result">
             <div class="panel-heading">
               <div>
                 <p class="eyebrow">STEP 4</p>
-                <h2>CCD 패키지 초안 생성</h2>
+                <h2>서버 전송 및 CCD 패키지 생성</h2>
               </div>
-              <button id="generateButton" class="button button-primary" type="button">결과 생성하기</button>
+              <button id="generateButton" class="button button-primary" type="button">서버로 전송 후 생성</button>
             </div>
 
             <div class="result-shell" id="resultShell">
               <div class="result-placeholder">
-                <h3>결과물이 아직 생성되지 않았습니다.</h3>
-                <p>파일을 업로드하거나 옵션을 입력한 뒤, CCD 패키지 초안을 생성해보세요.</p>
+                <h3>CCD 패키지 문서가 아직 생성되지 않았습니다.</h3>
+                <p>3개 시트 입력을 정리한 뒤 서버 전송을 실행하면 공정도, 문서, 장비 목록, 예산 요약이 출력됩니다.</p>
               </div>
             </div>
 
             <div class="result-actions">
-              <button id="downloadSummaryButton" class="ghost-button" type="button">요약 다운로드</button>
-              <button id="downloadSheetButton" class="ghost-button" type="button">입력 시트 CSV 다운로드</button>
+              <button id="downloadSummaryButton" class="ghost-button" type="button">CCD 문서 다운로드</button>
+              <button id="downloadSheetButton" class="ghost-button" type="button">CSV 패키지 다운로드</button>
             </div>
           </article>
         </section>
