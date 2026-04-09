@@ -4,6 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BioForge CCD Studio Workspace</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link
+      rel="stylesheet"
+      as="style"
+      crossorigin
+      href="https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css"
+    />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body data-page="workspace">
@@ -16,15 +23,16 @@
         <nav class="nav">
           <a href="./index.html">홈</a>
           <a href="#result">결과 미리보기</a>
+          <a href="./ccd-viewer.html">3D CCD 뷰어</a>
           <a href="./workspace.html" class="nav-cta">CCD 생성 화면</a>
         </nav>
       </header>
 
       <main class="workspace-main">
-        <section class="workspace-header">
+        <section class="workspace-header workspace-hero-card">
           <div>
             <p class="eyebrow">CCD PACKAGE BUILDER</p>
-            <h1>3개 시트 입력을 정리하고 CCD 개념설계 패키지를 생성하세요</h1>
+            <h1>본인 기관에 맞는 데이터를 입력해 효율적으로 CCD를 받아보세요</h1>
             <p>
               현재 버전은 다중 시트 입력과 서버 전송 흐름을 검증하기 위한 데모입니다. 업로드된 워크북을
               3개 핵심 시트 구조로 축약하고, 서버 응답을 가정한 CCD 개념설계 패키지 문서 화면을 생성합니다.
@@ -176,7 +184,7 @@
           </article>
         </section>
 
-        <section class="workspace-grid">
+        <section class="workspace-stack">
           <article class="panel panel-wide">
             <div class="panel-heading">
               <div>

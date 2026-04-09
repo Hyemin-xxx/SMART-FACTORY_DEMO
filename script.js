@@ -134,6 +134,162 @@ function buildMermaidDiagram(payload) {
   ].join("\n");
 }
 
+function parseDiagramSegment(segment) {
+  const trimmed = segment.trim();
+  const match = trimmed.match(/^([A-Za-z0-9_]+)\[(.+)\]$/);
+  if (match) {
+    return { id: match[1], label: match[2] };
+  }
+
+  return { id: trimmed, label: trimmed };
+}
+
+function buildDiagramPreview(mermaid) {
+  const lines = mermaid
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith("flowchart"));
+
+  const nodes = new Map();
+  const edges = [];
+
+  lines.forEach((line) => {
+    const parts = line.split("-->");
+    if (parts.length !== 2) {
+      return;
+    }
+
+    const source = parseDiagramSegment(parts[0]);
+    const target = parseDiagramSegment(parts[1]);
+    nodes.set(source.id, source.label);
+    nodes.set(target.id, target.label);
+    edges.push({ source: source.id, target: target.id });
+  });
+
+  if (!nodes.size) {
+    return "";
+  }
+
+  const incomingCount = new Map();
+  const levels = new Map();
+  const adjacency = new Map();
+
+  nodes.forEach((_, id) => {
+    incomingCount.set(id, 0);
+    adjacency.set(id, []);
+  });
+
+  edges.forEach((edge) => {
+    incomingCount.set(edge.target, (incomingCount.get(edge.target) || 0) + 1);
+    adjacency.get(edge.source)?.push(edge.target);
+  });
+
+  const queue = [];
+  nodes.forEach((_, id) => {
+    if ((incomingCount.get(id) || 0) === 0) {
+      levels.set(id, 0);
+      queue.push(id);
+    }
+  });
+
+  while (queue.length) {
+    const current = queue.shift();
+    const currentLevel = levels.get(current) || 0;
+
+    (adjacency.get(current) || []).forEach((target) => {
+      const nextLevel = currentLevel + 1;
+      levels.set(target, Math.max(levels.get(target) || 0, nextLevel));
+      incomingCount.set(target, (incomingCount.get(target) || 1) - 1);
+      if ((incomingCount.get(target) || 0) <= 0) {
+        queue.push(target);
+      }
+    });
+  }
+
+  const grouped = new Map();
+  nodes.forEach((label, id) => {
+    const level = levels.get(id) || 0;
+    const bucket = grouped.get(level) || [];
+    bucket.push({ id, label });
+    grouped.set(level, bucket);
+  });
+
+  const sortedLevels = [...grouped.keys()].sort((a, b) => a - b);
+  const nodeWidth = 180;
+  const nodeHeight = 56;
+  const columnGap = 84;
+  const rowGap = 32;
+  const padding = 24;
+  const maxRows = Math.max(...sortedLevels.map((level) => grouped.get(level).length));
+  const width = padding * 2 + sortedLevels.length * nodeWidth + Math.max(sortedLevels.length - 1, 0) * columnGap;
+  const height = padding * 2 + maxRows * nodeHeight + Math.max(maxRows - 1, 0) * rowGap;
+
+  const positions = new Map();
+  sortedLevels.forEach((level, levelIndex) => {
+    const items = grouped.get(level) || [];
+    const columnX = padding + levelIndex * (nodeWidth + columnGap);
+    const occupiedHeight = items.length * nodeHeight + Math.max(items.length - 1, 0) * rowGap;
+    const startY = padding + (height - padding * 2 - occupiedHeight) / 2;
+
+    items.forEach((item, itemIndex) => {
+      positions.set(item.id, {
+        x: columnX,
+        y: startY + itemIndex * (nodeHeight + rowGap)
+      });
+    });
+  });
+
+  const edgeMarkup = edges
+    .map((edge) => {
+      const source = positions.get(edge.source);
+      const target = positions.get(edge.target);
+      if (!source || !target) {
+        return "";
+      }
+
+      const startX = source.x + nodeWidth;
+      const startY = source.y + nodeHeight / 2;
+      const endX = target.x;
+      const endY = target.y + nodeHeight / 2;
+      const midX = startX + (endX - startX) / 2;
+
+      return `<path d="M ${startX} ${startY} C ${midX} ${startY}, ${midX} ${endY}, ${endX} ${endY}" class="diagram-edge" marker-end="url(#diagram-arrow)" />`;
+    })
+    .join("");
+
+  const nodeMarkup = [...nodes.entries()]
+    .map(([id, label]) => {
+      const position = positions.get(id);
+      if (!position) {
+        return "";
+      }
+
+      return `
+        <g transform="translate(${position.x} ${position.y})">
+          <rect width="${nodeWidth}" height="${nodeHeight}" rx="16" ry="16" class="diagram-node" />
+          <foreignObject x="12" y="10" width="${nodeWidth - 24}" height="${nodeHeight - 20}">
+            <div xmlns="http://www.w3.org/1999/xhtml" class="diagram-node-label">${escapeHtml(label)}</div>
+          </foreignObject>
+        </g>
+      `;
+    })
+    .join("");
+
+  return `
+    <div class="diagram-preview-shell">
+      <svg viewBox="0 0 ${width} ${height}" class="diagram-preview" role="img" aria-label="Process flow diagram preview">
+        <defs>
+          <marker id="diagram-arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+            <path d="M 0 0 L 12 6 L 0 12 z" fill="#3e7d68"></path>
+          </marker>
+        </defs>
+        ${edgeMarkup}
+        ${nodeMarkup}
+      </svg>
+    </div>
+  `;
+}
+
 function buildServerPayload(form, workbookSheets, activeFile) {
   const formData = new FormData(form);
 
@@ -394,6 +550,7 @@ function initWorkspacePage() {
             <h3>Process Flow Diagram</h3>
             <span class="doc-chip">Mermaid</span>
           </div>
+          ${buildDiagramPreview(response.mermaid)}
           <pre class="mermaid-block">${escapeHtml(response.mermaid)}</pre>
         </section>
 
