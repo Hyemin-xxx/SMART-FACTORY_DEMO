@@ -173,3 +173,68 @@ python3 server.py
 # - 마우스 좌클릭 회전 / 휠 줌 / 우클릭 패닝 동작 확인
 # - 하단 JSON 미리보기에서 현재 payload 확인
 ```
+
+---
+
+## Step 9. 통합 커밋과 main 브랜치 머지/푸시 (2026-04-10)
+
+CCD 뷰어 페이지를 만든 직후, 주변 파일들에 남아 있던 사전 작업과 함께 main 브랜치까지
+끌어올렸다.
+
+### 9-1. design 브랜치에 두 개의 커밋 적층
+
+| 커밋 | 내용 |
+|---|---|
+| `f100284` | `ccd-viewer.html`, `ccd-viewer.js`, `docs/04-ccd-3d-viewer.md` 신규 파일 추가 |
+| `f3f1794` | `index.html` / `workspace.html` 의 nav 진입 링크, `styles.css` 의 CCD 뷰어 스타일 블록 + 워크스페이스 디자인 폴리시, `script.js` 의 diagram preview SVG 빌더, `server.py` 정리 |
+
+`f3f1794` 는 CCD 뷰어 단독 변경과 사전 작업이 같은 파일에 섞여 있어 분리하지 않고 한 번에
+묶었다.
+
+### 9-2. design → main 머지 (충돌 해결)
+
+`design` 과 `main` 이 분기되어 있어서 fast-forward 가 불가능한 상태였다.
+
+- `git merge design --no-ff` 시도 → 3개 파일에서 충돌
+  - `script.js`
+  - `styles.css`
+  - `workspace.html`
+- 충돌 원인: main 에 있던 이전 워크스페이스 구조(URS 28-시트 아코디언, `panel-span-2`,
+  `schema-form`, `accordion-list` 등)가 design 의 새로운 3-시트 구조와 겹쳤다.
+- **사용자 의사 확인 결과 이전 구조는 유지하지 않기로 결정했고**, design 쪽 버전으로
+  통일했다.
+  ```bash
+  git checkout --theirs script.js styles.css workspace.html
+  git add script.js styles.css workspace.html
+  git commit  # 머지 커밋 15ce17f
+  ```
+
+### 9-3. main 푸시
+
+```bash
+git push origin main
+# 0586c07..15ce17f  main -> main
+```
+
+머지 커밋 트리:
+
+```
+*   15ce17f Merge branch 'design' into main
+|\
+| * f3f1794 Wire CCD viewer into nav and bundle in-progress design polish
+| * f100284 Add 3D conceptual design (CCD) viewer page
+| * 79c9808 Add workbook parsing and CCD package server flow
+| * 8a239a4 Refine landing page design
+* | 0586c07 몰라
+* | 7d8d472 git ignore 추가
+```
+
+### 9-4. 정리되지 않은 항목
+
+- `design` 브랜치는 로컬에 그대로 남아 있고, `origin/design` 에는 아직 `f100284` /
+  `f3f1794` 가 푸시되지 않았다. 필요해지면 `git push origin design` 으로 동기화한다.
+- `feature` 브랜치는 이번 작업 범위 밖이라 그대로 두었다.
+- 머지로 인해 main 에 있던 URS 28-시트 워크스페이스 구조 (`accordion-list`,
+  `schema-form`, `panel-span-2`, `sheet-table-wide` 등) 는 사라졌다. 해당 구조가 다시
+  필요해지면 `git show 0586c07:workspace.html`, `git show 0586c07:styles.css` 로
+  복원할 수 있다.
