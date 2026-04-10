@@ -32,6 +32,7 @@
           <a href="./index.html">홈</a>
           <a href="./workspace.html">입력 워크스페이스</a>
           <a href="./ccd-viewer.html" class="nav-cta">3D CCD 뷰어</a>
+          <a href="./facility-layout/" title="facility-layout-app · npm run dev 후 접속" target="_blank" rel="noopener">Layout Test ↗</a>
         </nav>
       </header>
 
@@ -68,6 +69,16 @@
             </p>
 
             <form id="ccdForm" class="config-form ccd-form">
+              <label class="ccd-scenario-row">
+                <span>설계 시나리오</span>
+                <select name="scenario" id="ccdScenarioSelect">
+                  <option value="recommended" selected>권장 (모범 배치 · 평가 통과 기대)</option>
+                  <option value="standard">표준 (개선 여지 있음)</option>
+                  <option value="violation">위반 사례 (의도적 결함 · 평가 실패)</option>
+                </select>
+                <small>시나리오를 바꾸면 area별 압력 / ACH / 인접 배치가 달라져 점수가 즉시 바뀝니다.</small>
+              </label>
+
               <div class="form-grid">
                 <label>
                   <span>프로젝트 명</span>
@@ -137,12 +148,14 @@
             <div class="ccd-legend">
               <p class="meta-label">3D 객체 범례</p>
               <ul>
-                <li><span class="legend-swatch swatch-area"></span>CleanRoom_Wall (반투명 박스)</li>
-                <li><span class="legend-swatch swatch-bioreactor"></span>Bioreactor (원기둥)</li>
+                <li><span class="legend-swatch swatch-area"></span>CleanRoom_Wall (반투명 박스, 색조 = 압력)</li>
+                <li><span class="legend-swatch swatch-bioreactor"></span>Bioreactor (실제 형상 · dome + 다리 + 임펠러)</li>
                 <li><span class="legend-swatch swatch-chrom"></span>Chromatography / UFDF Skid</li>
-                <li><span class="legend-swatch swatch-fill"></span>Filling Machine / Lyophilizer</li>
-                <li><span class="legend-swatch swatch-buffer"></span>Buffer / Media Tank</li>
+                <li><span class="legend-swatch swatch-fill"></span>Filling Machine (실제 형상 · 아이솔레이터 + 노즐)</li>
+                <li><span class="legend-swatch swatch-buffer"></span>Buffer Tank (실제 형상 · ASME dished head)</li>
+                <li><span class="legend-swatch swatch-airflow"></span>HEPA 파티클 / 압력 캐스케이드 화살표</li>
               </ul>
+              <p class="ccd-legend-note">개념 시각화 · not validated CFD</p>
             </div>
           </article>
 
@@ -187,13 +200,53 @@
         </section>
 
         <section class="workspace-stack">
-          <article class="panel panel-wide">
+          <article class="panel panel-wide ccd-eval-panel">
             <div class="panel-heading">
               <div>
                 <p class="eyebrow">STEP 3</p>
+                <h2>설계 평가 (Compliance Score)</h2>
+              </div>
+              <span class="doc-chip">Rule-based · concept-level</span>
+            </div>
+            <p class="panel-copy">
+              현재 배치를 4개 룰(압력 캐스케이드 / Grade 인접성 / 설비 밀도 / HEPA ACH)로 채점합니다.
+              실제 GMP 검증이 아니라 CCD 단계의 sanity check 수준이며, 점수는 의사결정 보조 용도입니다.
+            </p>
+
+            <div class="ccd-eval-layout">
+              <div class="ccd-eval-summary" id="ccdEvalSummary">
+                <div class="ccd-eval-grade-card">
+                  <span class="meta-label">Overall Grade</span>
+                  <strong class="ccd-eval-grade" id="ccdEvalGrade">—</strong>
+                  <small id="ccdEvalGradeNote">아직 평가되지 않았습니다</small>
+                </div>
+                <div class="ccd-eval-score-card">
+                  <span class="meta-label">Weighted Score</span>
+                  <strong class="ccd-eval-score" id="ccdEvalScore">—</strong>
+                  <small>0 ~ 100</small>
+                </div>
+                <div class="ccd-eval-meta-card">
+                  <span class="meta-label">Scenario</span>
+                  <strong id="ccdEvalScenario">—</strong>
+                  <small>좌측 시나리오 셀렉트 기준</small>
+                </div>
+              </div>
+
+              <ul class="ccd-eval-rules" id="ccdEvalRules">
+                <li class="ccd-eval-empty">
+                  「설계 생성」 버튼을 누르면 룰별 점수와 위반 사항이 여기 표시됩니다.
+                </li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="panel panel-wide">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">STEP 4</p>
                 <h2>CCD JSON 미리보기</h2>
               </div>
-              <span class="doc-chip">LLM 응답 호환 스키마</span>
+              <span class="doc-chip">LLM 응답 호환 스키마 · airflow / pressure 포함</span>
             </div>
             <p class="panel-copy">
               현재 화면에 렌더링되는 데이터입니다. 동일한 JSON 구조를 LLM에 요청하면, 응답을 그대로 이

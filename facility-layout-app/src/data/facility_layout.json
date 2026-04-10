@@ -1,0 +1,570 @@
+{
+  "meta": {
+    "product": "Monoclonal Antibody (mAb)",
+    "scale": "2000L bioreactor · 20 batches/year",
+    "phase": "Clinical / Early Commercial",
+    "version": "0.1.0",
+    "scale_px_per_m": 14,
+    "notes": [
+      "Indicated square meters do not always consider airlocks, walls etc.",
+      "Exact room sizing to be done in BD phase. Exact position of pass-boxes to be defined in BD phase.",
+      "Visitors access to be defined in BD phase.",
+      "Waste out / Material in: temporal segregation in return corridor."
+    ]
+  },
+  "grade_definitions": {
+    "A": {
+      "color": "#15803d",
+      "iso_class": "ISO 5",
+      "description": "Aseptic processing zone (LAF / RABS / isolator)"
+    },
+    "B": {
+      "color": "#86efac",
+      "iso_class": "ISO 5 (at rest)",
+      "description": "Background to Grade A operations"
+    },
+    "C": {
+      "color": "#1d4ed8",
+      "iso_class": "ISO 7",
+      "description": "Less critical clean operations of sterile manufacture"
+    },
+    "D": {
+      "color": "#7dd3fc",
+      "iso_class": "ISO 8",
+      "description": "Clean support areas"
+    },
+    "CNC": {
+      "color": "#fbbf24",
+      "iso_class": "—",
+      "description": "Controlled, not classified"
+    },
+    "Uncontrolled": {
+      "color": "#f87171",
+      "iso_class": "—",
+      "description": "Office / utility / unrestricted area"
+    }
+  },
+  "grid": {
+    "columns": [8.1, 8.12, 7.8, 7.2, 7.8, 7.8, 7.2, 7.0],
+    "rows": [7.3, 8.2, 9.5, 8.7, 8.3]
+  },
+  "building": {
+    "origin": [60, 110],
+    "width_px": 854,
+    "height_px": 588
+  },
+  "rooms": [
+    {
+      "id": "equipment-hall",
+      "name": "Equipment Hall / Visitors Access",
+      "grade": "Uncontrolled",
+      "area_m2": 185.0,
+      "x": 60,
+      "y": 110,
+      "w": 854,
+      "h": 217,
+      "pressure_pa": 0,
+      "ach": 2,
+      "adjacent_to": ["media-buffer", "fermentation", "hvac"],
+      "personnel_flow": { "in": "main entrance", "out": "gowning-c, gowning-d" },
+      "material_flow": { "in": "loading dock", "out": "storage-bulk, storage-material" },
+      "waste_flow": { "out": "external waste yard" },
+      "equipment": ["mobile equipment staging", "QC sampling station", "visitor lockers"],
+      "ispe_ref": "ISPE Vol 6 §5.2 — non-classified support"
+    },
+    {
+      "id": "media-buffer",
+      "name": "Media / Buffer Preparation",
+      "grade": "C",
+      "area_m2": 15.0,
+      "x": 60,
+      "y": 330,
+      "w": 113,
+      "h": 130,
+      "pressure_pa": 15,
+      "ach": 22,
+      "adjacent_to": ["weighing", "seed-lab"],
+      "personnel_flow": { "in": "gowning-c", "out": "gowning-c" },
+      "material_flow": { "in": "weighing", "out": "fermentation" },
+      "waste_flow": { "out": "cleaning" },
+      "equipment": ["mixing tank 500L", "WFI drop", "buffer hold tank x2"],
+      "ispe_ref": "ISPE Vol 6 §6.3 — buffer prep"
+    },
+    {
+      "id": "weighing",
+      "name": "Weighing Room",
+      "grade": "C",
+      "area_m2": 7.0,
+      "x": 60,
+      "y": 460,
+      "w": 113,
+      "h": 70,
+      "pressure_pa": 15,
+      "ach": 22,
+      "adjacent_to": ["media-buffer", "gowning-c"],
+      "personnel_flow": { "in": "gowning-c", "out": "media-buffer" },
+      "material_flow": { "in": "storage-material", "out": "media-buffer" },
+      "waste_flow": { "out": "cleaning" },
+      "equipment": ["analytical balance", "fume hood", "raw-material trolley"],
+      "ispe_ref": "ISPE Vol 6 §6.2 — dispensing"
+    },
+    {
+      "id": "seed-lab",
+      "name": "Seed Lab",
+      "grade": "C",
+      "area_m2": 7.5,
+      "x": 173,
+      "y": 330,
+      "w": 114,
+      "h": 65,
+      "pressure_pa": 18,
+      "ach": 25,
+      "adjacent_to": ["media-buffer", "fermentation", "ipc"],
+      "personnel_flow": { "in": "gowning-c", "out": "ipc" },
+      "material_flow": { "in": "media-buffer", "out": "fermentation" },
+      "waste_flow": { "out": "cleaning" },
+      "equipment": ["biosafety cabinet", "incubator", "seed bioreactor 50L"],
+      "ispe_ref": "ISPE Vol 6 §6.4 — inoculum"
+    },
+    {
+      "id": "ipc",
+      "name": "IPC",
+      "grade": "C",
+      "area_m2": 7.4,
+      "x": 173,
+      "y": 395,
+      "w": 114,
+      "h": 65,
+      "pressure_pa": 15,
+      "ach": 22,
+      "adjacent_to": ["seed-lab", "fermentation"],
+      "personnel_flow": { "in": "seed-lab", "out": "fermentation" },
+      "material_flow": { "in": "seed-lab", "out": "fermentation" },
+      "waste_flow": { "out": "cleaning" },
+      "equipment": ["bioanalyzer", "HPLC", "sample fridge"],
+      "ispe_ref": "ISPE Vol 6 §6.10 — in-process control"
+    },
+    {
+      "id": "fermentation",
+      "name": "Fermentation",
+      "grade": "C",
+      "area_m2": 14.5,
+      "x": 287,
+      "y": 330,
+      "w": 109,
+      "h": 130,
+      "pressure_pa": 18,
+      "ach": 25,
+      "adjacent_to": ["seed-lab", "ipc", "puri-1"],
+      "personnel_flow": { "in": "ipc", "out": "puri-1" },
+      "material_flow": { "in": "media-buffer", "out": "puri-1" },
+      "waste_flow": { "out": "cleaning" },
+      "equipment": ["production bioreactor 2000L", "harvest tank", "CIP skid"],
+      "ispe_ref": "ISPE Vol 6 §6.5 — fermentation"
+    },
+    {
+      "id": "puri-1",
+      "name": "Purification I",
+      "grade": "B",
+      "area_m2": 6.7,
+      "x": 396,
+      "y": 330,
+      "w": 101,
+      "h": 65,
+      "pressure_pa": 30,
+      "ach": 45,
+      "adjacent_to": ["fermentation", "puri-2", "preparation"],
+      "personnel_flow": { "in": "personnel-al", "out": "puri-2" },
+      "material_flow": { "in": "fermentation", "out": "puri-2" },
+      "waste_flow": { "out": "cleaning" },
+      "equipment": ["capture chromatography skid", "viral inactivation tank"],
+      "ispe_ref": "ISPE Vol 6 §6.6 — capture / DSP"
+    },
+    {
+      "id": "puri-2",
+      "name": "Purification II",
+      "grade": "B",
+      "area_m2": 6.5,
+      "x": 497,
+      "y": 330,
+      "w": 98,
+      "h": 65,
+      "pressure_pa": 30,
+      "ach": 45,
+      "adjacent_to": ["puri-1", "puri-3", "preparation"],
+      "personnel_flow": { "in": "puri-1", "out": "puri-3" },
+      "material_flow": { "in": "puri-1", "out": "puri-3" },
+      "waste_flow": { "out": "cleaning" },
+      "equipment": ["polishing chromatography skid", "UF/DF skid"],
+      "ispe_ref": "ISPE Vol 6 §6.7 — polishing"
+    },
+    {
+      "id": "preparation",
+      "name": "Preparation",
+      "grade": "B",
+      "area_m2": 13.4,
+      "x": 396,
+      "y": 395,
+      "w": 199,
+      "h": 65,
+      "pressure_pa": 30,
+      "ach": 45,
+      "adjacent_to": ["puri-1", "puri-2", "puri-3"],
+      "personnel_flow": { "in": "personnel-al", "out": "personnel-al" },
+      "material_flow": { "in": "puri-2", "out": "visitor-corridor" },
+      "waste_flow": { "out": "cleaning" },
+      "equipment": ["formulation tank", "fill prep table", "sterile filter housing"],
+      "ispe_ref": "ISPE Vol 6 §6.8 — formulation"
+    },
+    {
+      "id": "puri-3",
+      "name": "Purification III",
+      "grade": "B",
+      "area_m2": 7.0,
+      "x": 173,
+      "y": 460,
+      "w": 114,
+      "h": 70,
+      "pressure_pa": 28,
+      "ach": 42,
+      "adjacent_to": ["puri-2", "preparation", "calibration"],
+      "personnel_flow": { "in": "personnel-al", "out": "preparation" },
+      "material_flow": { "in": "puri-2", "out": "preparation" },
+      "waste_flow": { "out": "cleaning" },
+      "equipment": ["nanofiltration skid", "buffer exchange skid"],
+      "ispe_ref": "ISPE Vol 6 §6.7 — final polish"
+    },
+    {
+      "id": "calibration",
+      "name": "Calibration",
+      "grade": "C",
+      "area_m2": 6.6,
+      "x": 287,
+      "y": 460,
+      "w": 109,
+      "h": 70,
+      "pressure_pa": 12,
+      "ach": 20,
+      "adjacent_to": ["puri-3", "storage-bulk"],
+      "personnel_flow": { "in": "gowning-c", "out": "gowning-c" },
+      "material_flow": { "in": "ipc", "out": "ipc" },
+      "waste_flow": { "out": "cleaning" },
+      "equipment": ["calibration bench", "instrument cart"],
+      "ispe_ref": "ISPE Vol 6 §7.4 — instrument calibration"
+    },
+    {
+      "id": "storage-bulk",
+      "name": "Storage Bulk",
+      "grade": "C",
+      "area_m2": 6.0,
+      "x": 396,
+      "y": 460,
+      "w": 99,
+      "h": 70,
+      "pressure_pa": 10,
+      "ach": 18,
+      "adjacent_to": ["calibration", "storage-material", "preparation"],
+      "personnel_flow": { "in": "personnel-al", "out": "personnel-al" },
+      "material_flow": { "in": "preparation", "out": "visitor-corridor" },
+      "waste_flow": { "out": "cleaning" },
+      "equipment": ["cold-room shelving", "freezer x2", "sample logger"],
+      "ispe_ref": "ISPE Vol 6 §6.11 — bulk storage"
+    },
+    {
+      "id": "storage-material",
+      "name": "Storage Material",
+      "grade": "D",
+      "area_m2": 6.0,
+      "x": 495,
+      "y": 460,
+      "w": 100,
+      "h": 70,
+      "pressure_pa": 8,
+      "ach": 14,
+      "adjacent_to": ["storage-bulk", "cleaning"],
+      "personnel_flow": { "in": "gowning-d", "out": "weighing" },
+      "material_flow": { "in": "equipment-hall", "out": "weighing" },
+      "waste_flow": { "out": "cleaning" },
+      "equipment": ["raw-material rack", "cold-room access", "QC hold"],
+      "ispe_ref": "ISPE Vol 6 §6.1 — incoming materials"
+    },
+    {
+      "id": "cleaning",
+      "name": "Cleaning",
+      "grade": "D",
+      "area_m2": 6.0,
+      "x": 60,
+      "y": 530,
+      "w": 113,
+      "h": 65,
+      "pressure_pa": 8,
+      "ach": 12,
+      "adjacent_to": ["weighing", "gowning-c"],
+      "personnel_flow": { "in": "gowning-d", "out": "gowning-d" },
+      "material_flow": { "in": "all process rooms", "out": "external waste yard" },
+      "waste_flow": { "out": "external waste yard" },
+      "equipment": ["wash sink", "cleaning trolley", "disinfectant station"],
+      "ispe_ref": "ISPE Vol 6 §7.6 — wash / cleaning"
+    },
+    {
+      "id": "gowning-c",
+      "name": "Gowning C",
+      "grade": "C",
+      "area_m2": 6.6,
+      "x": 173,
+      "y": 530,
+      "w": 114,
+      "h": 65,
+      "pressure_pa": 12,
+      "ach": 20,
+      "adjacent_to": ["weighing", "media-buffer", "personnel-al"],
+      "personnel_flow": { "in": "gowning-d", "out": "media-buffer, weighing" },
+      "material_flow": { "in": "—", "out": "—" },
+      "waste_flow": { "out": "cleaning" },
+      "equipment": ["bench", "locker", "mirror", "cleanroom garment dispenser"],
+      "ispe_ref": "ISPE Vol 6 §7.2 — personnel gowning"
+    },
+    {
+      "id": "gowning-d",
+      "name": "Gowning D",
+      "grade": "D",
+      "area_m2": 6.4,
+      "x": 287,
+      "y": 530,
+      "w": 109,
+      "h": 65,
+      "pressure_pa": 6,
+      "ach": 12,
+      "adjacent_to": ["gowning-c", "stairs"],
+      "personnel_flow": { "in": "stairs", "out": "gowning-c" },
+      "material_flow": { "in": "—", "out": "—" },
+      "waste_flow": { "out": "cleaning" },
+      "equipment": ["bench", "locker", "shoe cover dispenser"],
+      "ispe_ref": "ISPE Vol 6 §7.2 — gowning step 1"
+    },
+    {
+      "id": "personnel-al",
+      "name": "Personnel Airlock",
+      "grade": "D",
+      "area_m2": 5.8,
+      "x": 396,
+      "y": 530,
+      "w": 99,
+      "h": 65,
+      "pressure_pa": 12,
+      "ach": 18,
+      "adjacent_to": ["gowning-c", "puri-1", "preparation"],
+      "personnel_flow": { "in": "gowning-c", "out": "puri-1, preparation" },
+      "material_flow": { "in": "—", "out": "—" },
+      "waste_flow": { "out": "cleaning" },
+      "equipment": ["interlocked doors", "wash basin"],
+      "ispe_ref": "EU GMP Annex 1 §4.13 — airlock"
+    },
+    {
+      "id": "material-al",
+      "name": "Material Airlock",
+      "grade": "D",
+      "area_m2": 5.8,
+      "x": 495,
+      "y": 530,
+      "w": 100,
+      "h": 65,
+      "pressure_pa": 10,
+      "ach": 18,
+      "adjacent_to": ["storage-material", "preparation", "puri-2"],
+      "personnel_flow": { "in": "—", "out": "—" },
+      "material_flow": { "in": "storage-material", "out": "preparation, puri-2" },
+      "waste_flow": { "out": "—" },
+      "equipment": ["interlocked doors", "pass-through shelf"],
+      "ispe_ref": "EU GMP Annex 1 §4.13 — material airlock"
+    },
+    {
+      "id": "office",
+      "name": "Office",
+      "grade": "Uncontrolled",
+      "area_m2": 14.6,
+      "x": 60,
+      "y": 595,
+      "w": 170,
+      "h": 103,
+      "pressure_pa": 0,
+      "ach": 2,
+      "adjacent_to": ["stairs", "equipment-hall"],
+      "personnel_flow": { "in": "main entrance", "out": "stairs" },
+      "material_flow": { "in": "—", "out": "—" },
+      "waste_flow": { "out": "external" },
+      "equipment": ["desks", "QA workstation", "document cabinet"],
+      "ispe_ref": "ISPE Vol 6 §5.4 — admin"
+    },
+    {
+      "id": "stairs",
+      "name": "Stairs / Tech",
+      "grade": "Uncontrolled",
+      "area_m2": 9.0,
+      "x": 230,
+      "y": 595,
+      "w": 70,
+      "h": 103,
+      "pressure_pa": 0,
+      "ach": 2,
+      "adjacent_to": ["office", "gowning-d"],
+      "personnel_flow": { "in": "office", "out": "gowning-d" },
+      "material_flow": { "in": "—", "out": "—" },
+      "waste_flow": { "out": "—" },
+      "equipment": ["staircase", "tech access panel"],
+      "ispe_ref": "ISPE Vol 6 §5.4 — circulation"
+    },
+    {
+      "id": "tools",
+      "name": "Cleaning Tools",
+      "grade": "D",
+      "area_m2": 9.0,
+      "x": 300,
+      "y": 595,
+      "w": 96,
+      "h": 103,
+      "pressure_pa": 6,
+      "ach": 12,
+      "adjacent_to": ["gowning-d", "cleaning"],
+      "personnel_flow": { "in": "gowning-d", "out": "cleaning" },
+      "material_flow": { "in": "external", "out": "cleaning" },
+      "waste_flow": { "out": "external" },
+      "equipment": ["mop station", "cleaning tool rack", "spill kit"],
+      "ispe_ref": "ISPE Vol 6 §7.6 — wash tools"
+    },
+    {
+      "id": "visitor-corridor",
+      "name": "Visitor Corridor / Bulk Out",
+      "grade": "CNC",
+      "area_m2": 19.5,
+      "x": 396,
+      "y": 595,
+      "w": 199,
+      "h": 103,
+      "pressure_pa": 4,
+      "ach": 8,
+      "adjacent_to": ["preparation", "storage-bulk", "wfi-pw"],
+      "personnel_flow": { "in": "office", "out": "external" },
+      "material_flow": { "in": "preparation", "out": "external" },
+      "waste_flow": { "out": "—" },
+      "equipment": ["bulk transfer cart", "viewing window", "visitor briefing area"],
+      "ispe_ref": "ISPE Vol 6 §5.3 — controlled corridor"
+    },
+    {
+      "id": "hvac",
+      "name": "HVAC",
+      "grade": "CNC",
+      "area_m2": 39.5,
+      "x": 595,
+      "y": 330,
+      "w": 319,
+      "h": 200,
+      "pressure_pa": 0,
+      "ach": 6,
+      "adjacent_to": ["wfi-pw", "equipment-hall"],
+      "personnel_flow": { "in": "main entrance", "out": "main entrance" },
+      "material_flow": { "in": "—", "out": "—" },
+      "waste_flow": { "out": "—" },
+      "equipment": ["AHU x4", "HEPA bank", "dampers", "BMS panel"],
+      "ispe_ref": "ISPE Vol 6 §8 — HVAC plant room"
+    },
+    {
+      "id": "wfi-pw",
+      "name": "WFI / PW / Electrical / Server",
+      "grade": "Uncontrolled",
+      "area_m2": 33.6,
+      "x": 595,
+      "y": 530,
+      "w": 319,
+      "h": 168,
+      "pressure_pa": 0,
+      "ach": 4,
+      "adjacent_to": ["hvac", "visitor-corridor"],
+      "personnel_flow": { "in": "main entrance", "out": "main entrance" },
+      "material_flow": { "in": "—", "out": "—" },
+      "waste_flow": { "out": "—" },
+      "equipment": ["WFI generator", "PW loop", "electrical panel", "server rack"],
+      "ispe_ref": "ISPE Vol 6 §9 — utility plant"
+    }
+  ],
+  "airlocks": [
+    { "id": "al-1", "between": ["gowning-c", "media-buffer"], "x": 168, "y": 525, "w": 10, "h": 10 },
+    { "id": "al-2", "between": ["personnel-al", "puri-1"], "x": 440, "y": 395, "w": 10, "h": 10 },
+    { "id": "al-3", "between": ["material-al", "preparation"], "x": 540, "y": 460, "w": 10, "h": 10 },
+    { "id": "al-4", "between": ["material-al", "puri-2"], "x": 540, "y": 395, "w": 10, "h": 10 },
+    { "id": "al-5", "between": ["gowning-d", "gowning-c"], "x": 282, "y": 555, "w": 10, "h": 10 },
+    { "id": "al-6", "between": ["weighing", "media-buffer"], "x": 110, "y": 455, "w": 10, "h": 10 },
+    { "id": "al-7", "between": ["fermentation", "puri-1"], "x": 391, "y": 360, "w": 10, "h": 10 },
+    { "id": "al-8", "between": ["puri-1", "puri-2"], "x": 492, "y": 360, "w": 10, "h": 10 }
+  ],
+  "flow_arrows": [
+    {
+      "type": "personnel", "from": "stairs", "to": "gowning-d",
+      "waypoints": [[265, 595], [342, 595]]
+    },
+    {
+      "type": "personnel", "from": "gowning-d", "to": "gowning-c",
+      "waypoints": [[287, 562], [230, 562]]
+    },
+    {
+      "type": "personnel", "from": "gowning-c", "to": "media-buffer",
+      "waypoints": [[173, 550], [53, 550], [53, 395], [60, 395]]
+    },
+    {
+      "type": "personnel", "from": "gowning-c", "to": "weighing",
+      "waypoints": [[173, 540], [53, 540], [53, 495], [60, 495]]
+    },
+    {
+      "type": "personnel", "from": "personnel-al", "to": "puri-1",
+      "waypoints": [[446, 530], [446, 395]]
+    },
+    {
+      "type": "personnel", "from": "personnel-al", "to": "preparation",
+      "waypoints": [[470, 530], [470, 460], [496, 460]]
+    },
+    {
+      "type": "material", "from": "storage-material", "to": "weighing",
+      "waypoints": [[545, 530], [545, 700], [53, 700], [53, 495], [60, 495]]
+    },
+    {
+      "type": "material", "from": "weighing", "to": "media-buffer",
+      "waypoints": [[116, 460], [116, 395]]
+    },
+    {
+      "type": "material", "from": "media-buffer", "to": "fermentation",
+      "waypoints": [[173, 380], [230, 322], [342, 322], [342, 330]]
+    },
+    {
+      "type": "material", "from": "fermentation", "to": "puri-1",
+      "waypoints": [[396, 380], [446, 380]]
+    },
+    {
+      "type": "material", "from": "puri-1", "to": "puri-2",
+      "waypoints": [[497, 355], [546, 355]]
+    },
+    {
+      "type": "material", "from": "puri-2", "to": "preparation",
+      "waypoints": [[546, 395], [546, 428]]
+    },
+    {
+      "type": "bulk", "from": "preparation", "to": "storage-bulk",
+      "waypoints": [[496, 460], [446, 460]]
+    },
+    {
+      "type": "bulk", "from": "storage-bulk", "to": "visitor-corridor",
+      "waypoints": [[446, 530], [446, 595], [496, 595]]
+    },
+    {
+      "type": "waste", "from": "fermentation", "to": "cleaning",
+      "waypoints": [[287, 420], [53, 420], [53, 562], [60, 562]]
+    },
+    {
+      "type": "waste", "from": "preparation", "to": "cleaning",
+      "waypoints": [[396, 440], [53, 440], [53, 570], [60, 570]]
+    },
+    {
+      "type": "waste", "from": "cleaning", "to": "tools",
+      "waypoints": [[116, 595], [116, 700], [348, 700], [348, 698]]
+    }
+  ]
+}
