@@ -325,44 +325,63 @@ export default function FacilityMap({ layout, selectedRoomId, onRoomSelect }) {
         );
       })}
 
-      {/* Legend (right side) */}
-      <g transform="translate(1180, 130)">
-        <rect x="-12" y="-22" width="200" height="430" fill="#ffffff" stroke="#cbd5e1" strokeWidth="0.8" rx="8" />
-        <text x="0" y="0" fontSize="14" fontWeight="800" fill="#0f172a">
+      {/* Legend (right side — centered between building edge and SVG edge, glassmorphism) */}
+      <g transform="translate(1040, 120)" fontFamily="'Pretendard', 'Inter', system-ui, sans-serif">
+        {/* Apple-style frosted glass card */}
+        <defs>
+          <filter id="legend-frost" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="18" result="blur" />
+            <feColorMatrix in="blur" type="saturate" values="1.8" />
+          </filter>
+          <linearGradient id="legend-glass" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.72" />
+            <stop offset="50%" stopColor="#f8fafc" stopOpacity="0.58" />
+            <stop offset="100%" stopColor="#f1f5f9" stopOpacity="0.52" />
+          </linearGradient>
+        </defs>
+        {/* Soft shadow */}
+        <rect x="-12" y="-20" width="240" height="560" rx="22" fill="#94a3b8" opacity="0.12" filter="url(#legend-frost)" />
+        {/* Glass fill */}
+        <rect x="-16" y="-26" width="240" height="560" rx="22" fill="url(#legend-glass)" />
+        {/* Border — very subtle, Apple-style 1px hairline */}
+        <rect x="-16" y="-26" width="240" height="560" rx="22" fill="none" stroke="rgba(0,0,0,0.06)" strokeWidth="0.5" />
+        {/* Inner top highlight */}
+        <rect x="-14" y="-24" width="236" height="1" rx="0.5" fill="rgba(255,255,255,0.85)" />
+        <text x="0" y="14" fontSize="17" fontWeight="700" fill="#1d1d1f" letterSpacing="-0.02em">
           Room Classification
         </text>
-        <line x1="0" y1="6" x2="170" y2="6" stroke="#cbd5e1" strokeWidth="0.8" />
+        <line x1="0" y1="26" x2="204" y2="26" stroke="rgba(0,0,0,0.08)" strokeWidth="0.5" />
         {Object.entries(gradeDefs).map(([key, def], i) => (
-          <g key={key} transform={`translate(0, ${22 + i * 28})`}>
-            <rect x="0" y="0" width="22" height="16" fill={def.color} stroke="#1e293b" strokeWidth="0.6" />
-            <text x="32" y="13" fontSize="12" fill="#1e293b" fontWeight="600">
+          <g key={key} transform={`translate(0, ${42 + i * 34})`}>
+            <rect x="0" y="0" width="26" height="19" rx="5" fill={def.color} stroke="rgba(0,0,0,0.08)" strokeWidth="0.5" />
+            <text x="38" y="14" fontSize="13.5" fill="#1d1d1f" fontWeight="600" letterSpacing="-0.01em">
               {key === "Uncontrolled" ? "Uncontrolled" : `Grade ${key}`}
             </text>
-            <text x="32" y="25" fontSize="9" fill="#64748b">
+            <text x="38" y="28" fontSize="10.5" fill="#86868b">
               {def.iso_class}
             </text>
           </g>
         ))}
 
         {/* LAF / Airlock marker */}
-        <g transform={`translate(0, ${22 + Object.keys(gradeDefs).length * 28 + 4})`}>
-          <polygon points="11,0 22,8 11,16 0,8" fill="#cbd5e1" stroke="#1e293b" strokeWidth="0.6" />
-          <text x="32" y="13" fontSize="12" fill="#1e293b" fontWeight="600">
+        <g transform={`translate(0, ${42 + Object.keys(gradeDefs).length * 34 + 6})`}>
+          <polygon points="13,0 26,10 13,20 0,10" fill="#d1d1d6" stroke="rgba(0,0,0,0.1)" strokeWidth="0.5" />
+          <text x="38" y="15" fontSize="13.5" fill="#1d1d1f" fontWeight="600" letterSpacing="-0.01em">
             Airlock / LAF
           </text>
         </g>
 
         {/* Flow legend */}
-        <g transform={`translate(0, ${22 + (Object.keys(gradeDefs).length + 1) * 28 + 12})`}>
-          <text x="0" y="0" fontSize="14" fontWeight="800" fill="#0f172a">
+        <g transform={`translate(0, ${42 + (Object.keys(gradeDefs).length + 1) * 34 + 36})`}>
+          <text x="0" y="0" fontSize="17" fontWeight="700" fill="#1d1d1f" letterSpacing="-0.02em">
             Flow Legend
           </text>
-          <line x1="0" y1="6" x2="170" y2="6" stroke="#cbd5e1" strokeWidth="0.8" />
+          <line x1="0" y1="12" x2="204" y2="12" stroke="rgba(0,0,0,0.08)" strokeWidth="0.5" />
           {Object.entries(FLOW_COLORS).map(([key, color], i) => (
-            <g key={key} transform={`translate(0, ${22 + i * 24})`}>
-              <line x1="0" y1="8" x2="22" y2="8" stroke={color} strokeWidth="2.2" />
-              <polygon points="22,4 30,8 22,12" fill={color} />
-              <text x="40" y="12" fontSize="12" fill="#1e293b" fontWeight="600">
+            <g key={key} transform={`translate(0, ${26 + i * 29})`}>
+              <line x1="0" y1="9" x2="26" y2="9" stroke={color} strokeWidth="2.4" strokeLinecap="round" />
+              <polygon points="26,5 35,9 26,13" fill={color} />
+              <text x="46" y="14" fontSize="13.5" fill="#1d1d1f" fontWeight="600" letterSpacing="-0.01em">
                 {key.charAt(0).toUpperCase() + key.slice(1)} flow
               </text>
             </g>
