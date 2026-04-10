@@ -4,7 +4,7 @@ import React, { useMemo } from "react";
  * Renders a GMP facility cleanroom layout from a JSON spec.
  * SVG canvas is fixed at 1400 x 900.
  */
-export default function FacilityMap({ layout }) {
+export default function FacilityMap({ layout, selectedRoomId, onRoomSelect }) {
   const {
     meta,
     grade_definitions: gradeDefs,
@@ -79,8 +79,8 @@ export default function FacilityMap({ layout }) {
         ))}
       </defs>
 
-      {/* Background */}
-      <rect width="1400" height="900" fill="#f8fafc" />
+      {/* Background — click to deselect */}
+      <rect width="1400" height="900" fill="#f8fafc" onClick={() => onRoomSelect?.(null)} />
 
       {/* Title block */}
       <text x="60" y="36" fontSize="20" fontWeight="700" fill="#0f172a">
@@ -194,17 +194,26 @@ export default function FacilityMap({ layout }) {
       {rooms.map((room) => {
         const grade = gradeDefs[room.grade] ?? gradeDefs.Uncontrolled;
         const isHall = room.id === "equipment-hall";
+        const isSelected = selectedRoomId === room.id;
+        const selectedRoom = rooms.find((r) => r.id === selectedRoomId);
+        const isAdjacent = selectedRoom?.adjacent_to?.includes(room.id);
+        const isDimmed = selectedRoomId && !isSelected && !isAdjacent && !isHall;
         return (
-          <g key={room.id}>
+          <g
+            key={room.id}
+            opacity={isDimmed ? 0.3 : 1}
+            style={{ cursor: isHall ? "default" : "pointer" }}
+            onClick={() => !isHall && onRoomSelect?.(room.id)}
+          >
             <rect
               x={room.x}
               y={room.y}
               width={room.w}
               height={room.h}
               fill={isHall ? "url(#hall-hatch)" : grade.color}
-              fillOpacity={isHall ? 1 : 0.8}
-              stroke="#1e293b"
-              strokeWidth="0.85"
+              fillOpacity={isHall ? 1 : isSelected ? 1 : 0.8}
+              stroke={isSelected ? "#f59e0b" : isAdjacent ? "#facc15" : "#1e293b"}
+              strokeWidth={isSelected ? 3 : isAdjacent ? 2 : 0.85}
             />
             {!isHall && (
               <>
@@ -215,6 +224,7 @@ export default function FacilityMap({ layout }) {
                   textAnchor="middle"
                   fill="#0f172a"
                   fontWeight="700"
+                  pointerEvents="none"
                 >
                   {room.name}
                 </text>
@@ -224,6 +234,7 @@ export default function FacilityMap({ layout }) {
                   fontSize="9"
                   textAnchor="middle"
                   fill="#1e293b"
+                  pointerEvents="none"
                 >
                   ({room.area_m2.toFixed(1)} m²)
                 </text>
@@ -231,7 +242,7 @@ export default function FacilityMap({ layout }) {
             )}
             {isHall && (
               <>
-                <text x={room.x + room.w / 2} y={room.y + 30} fontSize="14" textAnchor="middle" fill="#475569" fontWeight="700">
+                <text x={room.x + room.w / 2} y={room.y + 30} fontSize="14" textAnchor="middle" fill="#475569" fontWeight="700" pointerEvents="none">
                   {room.name}
                 </text>
                 <text
@@ -240,6 +251,7 @@ export default function FacilityMap({ layout }) {
                   fontSize="11"
                   textAnchor="middle"
                   fill="#64748b"
+                  pointerEvents="none"
                 >
                   ({room.area_m2.toFixed(1)} m² · open equipment area)
                 </text>
@@ -265,33 +277,49 @@ export default function FacilityMap({ layout }) {
         );
       })}
 
-      {/* Flow arrows */}
+      {/* Flow arrows (polyline with waypoints) */}
       {flowArrows.map((arrow, i) => {
+        const color = FLOW_COLORS[arrow.type] ?? "#000";
+        const wp = arrow.waypoints;
+        const isRelated =
+          selectedRoomId &&
+          (arrow.from === selectedRoomId || arrow.to === selectedRoomId);
+        const arrowDimmed = selectedRoomId && !isRelated;
+
+        if (wp && wp.length >= 2) {
+          const pts = wp.map((p) => `${p[0]},${p[1]}`).join(" ");
+          return (
+            <polyline
+              key={`arrow-${i}`}
+              points={pts}
+              fill="none"
+              stroke={color}
+              strokeWidth={isRelated ? 2.8 : 1.6}
+              strokeOpacity={arrowDimmed ? 0.12 : 0.85}
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              markerEnd={`url(#arrow-${arrow.type})`}
+            />
+          );
+        }
+
+        // Fallback: straight line for arrows without waypoints
         const from = roomCenter.get(arrow.from);
         const to = roomCenter.get(arrow.to);
         if (!from || !to) return null;
-        const color = FLOW_COLORS[arrow.type] ?? "#000";
-
-        // Shorten arrow so it doesn't bury into the destination room rect
         const dx = to.x - from.x;
         const dy = to.y - from.y;
         const len = Math.hypot(dx, dy) || 1;
-        const shorten = 16;
-        const x2 = to.x - (dx / len) * shorten;
-        const y2 = to.y - (dy / len) * shorten;
-        const x1 = from.x + (dx / len) * 8;
-        const y1 = from.y + (dy / len) * 8;
-
         return (
           <line
             key={`arrow-${i}`}
-            x1={x1}
-            y1={y1}
-            x2={x2}
-            y2={y2}
+            x1={from.x + (dx / len) * 8}
+            y1={from.y + (dy / len) * 8}
+            x2={to.x - (dx / len) * 16}
+            y2={to.y - (dy / len) * 16}
             stroke={color}
-            strokeWidth="1.8"
-            strokeOpacity="0.85"
+            strokeWidth={isRelated ? 2.8 : 1.6}
+            strokeOpacity={arrowDimmed ? 0.12 : 0.85}
             markerEnd={`url(#arrow-${arrow.type})`}
           />
         );

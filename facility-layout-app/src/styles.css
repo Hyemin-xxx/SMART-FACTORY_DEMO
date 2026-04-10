@@ -170,6 +170,18 @@ code {
   margin-bottom: 22px;
 }
 
+.map-and-panel {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 18px;
+  align-items: start;
+}
+
+.map-and-panel .map-card {
+  margin-bottom: 0;
+  min-width: 0;
+}
+
 .eyebrow {
   margin: 0 0 12px;
   font-size: 0.78rem;
@@ -304,6 +316,17 @@ code {
   margin-top: 4px;
 }
 
+@media (max-width: 1200px) {
+  .map-and-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .room-panel {
+    position: static;
+    max-height: none;
+  }
+}
+
 @media (max-width: 720px) {
   .modal-grid {
     grid-template-columns: 1fr;
@@ -318,5 +341,241 @@ code {
 
   .topbar-nav {
     justify-content: space-between;
+  }
+}
+
+/* Room detail panel */
+.room-panel {
+  position: sticky;
+  top: 90px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  padding: 22px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+.room-panel-empty {
+  display: grid;
+  place-items: center;
+  min-height: 260px;
+  text-align: center;
+}
+
+.room-panel-hint {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 20ch;
+}
+
+.room-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.room-panel-title {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.room-panel-grade-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.room-panel-close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.room-panel-close:hover {
+  background: #f1f5f9;
+  color: var(--text);
+}
+
+.room-panel-section {
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  margin-top: 14px;
+}
+
+.room-panel-section h3 {
+  margin: 0 0 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.room-panel-dl {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 0;
+}
+
+.room-panel-dl > div {
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fafafa;
+}
+
+.room-panel-dl dt {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.room-panel-dl dd {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.room-panel-equip {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.room-panel-equip li {
+  font-size: 0.9rem;
+  color: var(--text);
+  padding: 6px 10px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.room-panel-flow-group {
+  display: grid;
+  gap: 8px;
+}
+
+.room-panel-flow-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.room-panel-flow-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text);
+  min-width: 70px;
+}
+
+.room-panel-flow-val {
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding: 2px 8px;
+  background: #f1f5f9;
+  border-radius: 8px;
+}
+
+.room-panel-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.room-panel-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border: 2px solid var(--border);
+  border-radius: 999px;
+  background: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 120ms ease, background 120ms ease;
+}
+
+.room-panel-chip:hover {
+  transform: translateY(-1px);
+  background: #f8fafc;
+}
+
+.room-panel-ref p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* Print — SVG 도면만 깨끗하게 출력 */
+@media print {
+  @page {
+    size: landscape;
+    margin: 10mm;
+  }
+
+  body {
+    background: #ffffff !important;
+  }
+
+  .topbar,
+  .intro-card,
+  .modal-backdrop,
+  .room-panel {
+    display: none !important;
+  }
+
+  .map-and-panel {
+    grid-template-columns: 1fr !important;
+  }
+
+  .page-shell {
+    width: 100% !important;
+    padding: 0 !important;
+  }
+
+  .map-card {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    break-inside: avoid;
+  }
+
+  .facility-svg {
+    width: 100% !important;
+    height: auto !important;
+    border-radius: 0 !important;
   }
 }
