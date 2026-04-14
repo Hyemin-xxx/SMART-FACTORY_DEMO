@@ -794,6 +794,7 @@ function initWorkspacePage() {
   async function generatePackage() {
     syncSheetsFromForm();
     renderGeneratingState();
+    const pipeline = startAgentPipeline();
 
     const payload = buildServerPayload(form, workbookSheets, activeFile);
     payload.parsedWorkbook = latestParsedWorkbook;
@@ -810,7 +811,172 @@ function initWorkspacePage() {
     } catch (_) {
       response = buildCcdPackageLocal(payload);
     }
+    await pipeline.finish();
     renderResult(payload, response);
+  }
+
+  const AGENT_DEFINITIONS = [
+    {
+      id: "parser",
+      name: "Workbook Parser",
+      role: "시트 파싱",
+      duration: 1400,
+      steps: ["시트 구조 스캔", "셀 정규화", "3개 시트 매핑 완료"]
+    },
+    {
+      id: "analyzer",
+      name: "Project Analyzer",
+      role: "프로젝트 분석",
+      duration: 1800,
+      steps: ["프로젝트 메타데이터 추출", "옵션·토글 평가", "산출물 범위 확정"]
+    },
+    {
+      id: "process",
+      name: "Process Designer",
+      role: "공정 설계",
+      duration: 2400,
+      steps: ["공정 단계 후보 생성", "Mermaid 다이어그램 작성", "단계별 파라미터 정리"]
+    },
+    {
+      id: "equipment",
+      name: "Equipment Estimator",
+      role: "장비 산정",
+      duration: 2200,
+      steps: ["주요 장비 후보 매칭", "용량·면적 산정", "Single-use 전략 반영"]
+    },
+    {
+      id: "cost",
+      name: "Cost Calculator",
+      role: "예산 계산",
+      duration: 1900,
+      steps: ["카테고리별 예산 추정", "유틸리티 비용 합산", "범위/오픈이슈 정리"]
+    },
+    {
+      id: "composer",
+      name: "Document Composer",
+      role: "문서 작성",
+      duration: 2000,
+      steps: ["섹션별 본문 생성", "다운로드 자료 묶음", "패키지 최종 검수"]
+    }
+  ];
+
+  const agentProgressEl = document.getElementById("agentProgress");
+  const agentGridEl = document.getElementById("agentGrid");
+  const agentOverallFill = document.getElementById("agentOverallFill");
+  const agentOverallPercent = document.getElementById("agentOverallPercent");
+  const agentProgressCopy = document.getElementById("agentProgressCopy");
+
+  function renderAgentCards() {
+    agentGridEl.innerHTML = AGENT_DEFINITIONS.map((agent) => `
+      <article class="agent-card" data-agent="${agent.id}" data-status="pending">
+        <div class="agent-card-head">
+          <div>
+            <p class="agent-card-role">${escapeHtml(agent.role)}</p>
+            <div class="agent-card-name">${escapeHtml(agent.name)}</div>
+          </div>
+          <span class="agent-card-badge" data-role="status">대기</span>
+        </div>
+        <div class="agent-card-bar"><span data-role="bar"></span></div>
+        <div class="agent-card-meta">
+          <span class="agent-card-step" data-role="step">대기열에서 순서를 기다리는 중...</span>
+          <span class="agent-card-percent" data-role="percent">0%</span>
+        </div>
+      </article>
+    `).join("");
+  }
+
+  function setAgentState(agent, percent, statusLabel, stepText, status) {
+    const card = agentGridEl.querySelector(`[data-agent="${agent.id}"]`);
+    if (!card) return;
+    card.dataset.status = status;
+    card.querySelector('[data-role="bar"]').style.width = `${percent}%`;
+    card.querySelector('[data-role="percent"]').textContent = `${Math.round(percent)}%`;
+    card.querySelector('[data-role="status"]').textContent = statusLabel;
+    if (stepText) card.querySelector('[data-role="step"]').textContent = stepText;
+  }
+
+  function updateOverall(progressMap) {
+    const total = AGENT_DEFINITIONS.reduce((sum, a) => sum + (progressMap[a.id] || 0), 0);
+    const pct = Math.round(total / AGENT_DEFINITIONS.length);
+    agentOverallFill.style.width = `${pct}%`;
+    agentOverallPercent.textContent = String(pct);
+  }
+
+  function startAgentPipeline() {
+    renderAgentCards();
+    agentProgressEl.hidden = false;
+    if (agentProgressCopy) {
+      agentProgressCopy.textContent = "서버에 요청을 보낸 직후, 각 모듈이 어떤 단계에 있는지 실시간으로 표시합니다.";
+    }
+
+    const progressMap = {};
+    AGENT_DEFINITIONS.forEach((a) => { progressMap[a.id] = 0; });
+    updateOverall(progressMap);
+
+    const startedAt = Date.now();
+    let cancelled = false;
+    let stagger = 0;
+
+    const promises = AGENT_DEFINITIONS.map((agent) => {
+      const launchDelay = stagger;
+      stagger += Math.round(agent.duration * 0.35);
+
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          if (cancelled) { resolve(); return; }
+          const begin = Date.now();
+          const interval = setInterval(() => {
+            if (cancelled) { clearInterval(interval); resolve(); return; }
+            const elapsed = Date.now() - begin;
+            const ratio = Math.min(elapsed / agent.duration, 0.95);
+            const percent = ratio * 100;
+            const stepIdx = Math.min(
+              agent.steps.length - 1,
+              Math.floor(ratio * agent.steps.length)
+            );
+            progressMap[agent.id] = percent;
+            setAgentState(agent, percent, "진행중", agent.steps[stepIdx], "running");
+            updateOverall(progressMap);
+            if (ratio >= 0.95) {
+              clearInterval(interval);
+              resolve();
+            }
+          }, 120);
+        }, launchDelay);
+      });
+    });
+
+    const allRunning = Promise.all(promises);
+
+    return {
+      async finish() {
+        await allRunning;
+        if (cancelled) return;
+        AGENT_DEFINITIONS.forEach((agent) => {
+          progressMap[agent.id] = 100;
+          setAgentState(agent, 100, "완료", agent.steps[agent.steps.length - 1], "done");
+        });
+        updateOverall(progressMap);
+        const elapsedSec = ((Date.now() - startedAt) / 1000).toFixed(1);
+        if (agentProgressCopy) {
+          agentProgressCopy.textContent = `모든 에이전트가 ${elapsedSec}초 만에 작업을 마쳤습니다.`;
+        }
+      },
+      fail() {
+        cancelled = true;
+        AGENT_DEFINITIONS.forEach((agent) => {
+          const card = agentGridEl.querySelector(`[data-agent="${agent.id}"]`);
+          if (!card) return;
+          if (card.dataset.status !== "done") {
+            const pct = progressMap[agent.id] || 0;
+            setAgentState(agent, pct, "중단", "서버 응답 실패로 중단됨", "error");
+          }
+        });
+        if (agentProgressCopy) {
+          agentProgressCopy.textContent = "서버 연결에 실패해 파이프라인이 중단되었습니다.";
+        }
+      }
+    };
   }
 
   dropzone.addEventListener("click", () => fileInput.click());

@@ -235,6 +235,22 @@
               <button id="generateButton" class="button button-primary" type="button">서버로 전송 후 생성</button>
             </div>
 
+            <section class="agent-progress" id="agentProgress" hidden aria-live="polite">
+              <div class="agent-progress-heading">
+                <div>
+                  <p class="eyebrow">AGENT PIPELINE</p>
+                  <h3 id="agentProgressTitle">에이전트별 작업 진행 상황</h3>
+                  <p class="agent-progress-copy" id="agentProgressCopy">서버에 요청을 보낸 직후, 각 모듈이 어떤 단계에 있는지 실시간으로 표시합니다.</p>
+                </div>
+                <div class="agent-progress-summary">
+                  <span class="meta-label">전체 진행률</span>
+                  <strong><span id="agentOverallPercent">0</span>%</strong>
+                  <div class="agent-overall-bar"><span id="agentOverallFill"></span></div>
+                </div>
+              </div>
+              <div class="agent-grid" id="agentGrid"></div>
+            </section>
+
             <div class="result-shell" id="resultShell">
               <div class="result-placeholder">
                 <h3>CD 패키지 문서가 아직 생성되지 않았습니다.</h3>
