@@ -34,6 +34,7 @@ const SAMPLE_CD = {
     cleanroomGrade: "Grade C",
     footprintMeters: [40, 28],
     areas: [
+      /* === Core process zones (primary 4) === */
       {
         id: "upstream",
         name: "Upstream Process Area",
@@ -85,7 +86,27 @@ const SAMPLE_CD = {
           supplyPoints: [[-13, 4.5, 6], [-7, 4.5, 6], [-13, 4.5, 10], [-7, 4.5, 10]],
           returnPoints: [[-16, 0.3, 8], [-4, 0.3, 8]]
         }
-      }
+      },
+      /* === Upstream support strip (top row, z=-22) === */
+      { id: "seed",         name: "Seed Expansion Suite",     grade: "Grade C", pressureDeltaPa: 15, achPerHour: 25, position: [-22, 0, -22], size: [10, 5, 7] },
+      { id: "harvest",      name: "Harvest / Clarification",  grade: "Grade C", pressureDeltaPa: 12, achPerHour: 22, position: [ -8, 0, -22], size: [10, 5, 7] },
+      { id: "viral-inact",  name: "Viral Inactivation",       grade: "Grade C", pressureDeltaPa: 18, achPerHour: 28, position: [  6, 0, -22], size: [10, 5, 7] },
+      { id: "viral-filt",   name: "Viral Filtration",         grade: "Grade C", pressureDeltaPa: 18, achPerHour: 28, position: [ 20, 0, -22], size: [10, 5, 7] },
+      /* === Packaging / support strip (bottom row, z=22) === */
+      { id: "raw-warehouse", name: "Raw Material Warehouse",  grade: "CNC",     pressureDeltaPa: 0,  achPerHour: 4,  position: [-22, 0, 22],  size: [10, 5, 7] },
+      { id: "gowning",      name: "Personnel Gowning",        grade: "Grade D", pressureDeltaPa: 8,  achPerHour: 10, position: [ -8, 0, 22],  size: [10, 5, 7] },
+      { id: "packaging",    name: "Secondary Packaging",      grade: "Grade D", pressureDeltaPa: 5,  achPerHour: 8,  position: [  6, 0, 22],  size: [10, 5, 7] },
+      { id: "finished-wh",  name: "Finished Goods Warehouse", grade: "CNC",     pressureDeltaPa: 0,  achPerHour: 4,  position: [ 20, 0, 22],  size: [10, 5, 7] },
+      /* === Side support columns === */
+      { id: "wfi-util",     name: "WFI / Clean Steam",        grade: "CNC",     pressureDeltaPa: 0,  achPerHour: 6,  position: [-22, 0, -8],  size: [8, 5, 8] },
+      { id: "qc-lab",       name: "QC Laboratory",            grade: "Grade D", pressureDeltaPa: 5,  achPerHour: 10, position: [-22, 0,  8],  size: [8, 5, 8] },
+      { id: "polishing",    name: "Polishing Chromatography", grade: "Grade C", pressureDeltaPa: 15, achPerHour: 25, position: [ 22, 0, -8],  size: [8, 5, 8] },
+      { id: "lyo",          name: "Lyophilization Suite",     grade: "Grade A/B", pressureDeltaPa: 28, achPerHour: 60, position: [ 22, 0,  8],  size: [8, 5, 8] },
+      /* === Outer ancillary ring === */
+      { id: "mech-plant",   name: "Mechanical Plant",         grade: "CNC",     pressureDeltaPa: 0,  achPerHour: 3,  position: [-22, 0, -32], size: [10, 5, 6] },
+      { id: "elec-plant",   name: "Electrical / IT Plant",    grade: "CNC",     pressureDeltaPa: 0,  achPerHour: 3,  position: [ 20, 0, -32], size: [10, 5, 6] },
+      { id: "admin",        name: "Admin / Documentation",    grade: "CNC",     pressureDeltaPa: 0,  achPerHour: 4,  position: [-22, 0,  32], size: [10, 5, 6] },
+      { id: "loading-dock", name: "Loading Dock",             grade: "CNC",     pressureDeltaPa: 0,  achPerHour: 3,  position: [ 20, 0,  32], size: [10, 5, 6] }
     ],
     equipment: [
       {
@@ -544,7 +565,7 @@ const evalRulesEl = document.getElementById("ccdEvalRules");
 /* 6. Scene setup                                                      */
 /* ================================================================== */
 
-const SCENE_SCALE = 3;
+const SCENE_SCALE = 1;
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0f172a);
@@ -1221,6 +1242,29 @@ function applyCcdPayload(payload, { animate = true, scenarioLabel = "" } = {}) {
 /* 14. Build payload from form                                         */
 /* ================================================================== */
 
+function autoFillAirflow(facility) {
+  if (!facility) return;
+  (facility.areas ?? []).forEach((a) => {
+    if (a.airflow) return;
+    const [px, , pz] = a.position;
+    const [sx, sy, sz] = a.size;
+    const ceilY = Math.max(sy - 0.4, 0.5);
+    const floorY = 0.3;
+    a.airflow = {
+      supplyPoints: [
+        [px - sx * 0.3, ceilY, pz - sz * 0.3],
+        [px + sx * 0.3, ceilY, pz - sz * 0.3],
+        [px - sx * 0.3, ceilY, pz + sz * 0.3],
+        [px + sx * 0.3, ceilY, pz + sz * 0.3]
+      ],
+      returnPoints: [
+        [px - sx * 0.45, floorY, pz],
+        [px + sx * 0.45, floorY, pz]
+      ]
+    };
+  });
+}
+
 function scaleFacility(facility, s) {
   if (!facility || s === 1) return;
   const scaleTriplet = (arr) => arr.map((v) => v * s);
@@ -1345,6 +1389,9 @@ function buildPayloadFromForm() {
   // Apply scenario preset (mutates the payload's facility)
   const preset = SCENARIO_PRESETS[scenario] ?? SCENARIO_PRESETS.recommended;
   preset.apply(payload.facility);
+
+  // Fill in default airflow points for any area that didn't hand-tune them
+  autoFillAirflow(payload.facility);
 
   // Scale up to commercial-scale footprint for demo presentation
   scaleFacility(payload.facility, SCENE_SCALE);
