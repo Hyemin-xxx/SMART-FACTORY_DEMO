@@ -1,7 +1,7 @@
 /*
- * BioForge CCD Studio · 3D Conceptual Design Viewer
+ * BioForge CD Studio · 3D Conceptual Design Viewer
  *
- * Renders a CCD JSON payload (areas + equipment + airflow) in a Three.js
+ * Renders a CD JSON payload (areas + equipment + airflow) in a Three.js
  * scene, with:
  *   - Realistic compound-primitive meshes for Bioreactor, BufferTank,
  *     FillingMachine (other equipment still uses fallback shapes)
@@ -19,14 +19,14 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 /* ================================================================== */
-/* 1. Sample CCD JSON                                                  */
+/* 1. Sample CD JSON                                                  */
 /*    Schema follows ISPE Baseline Guide Vol 6, extended with:         */
 /*      - area.pressureDeltaPa (relative to ambient, +Pa)              */
 /*      - area.achPerHour      (HVAC air changes per hour)             */
 /*      - area.airflow.{supplyPoints, returnPoints}                    */
 /* ================================================================== */
 
-const SAMPLE_CCD = {
+const SAMPLE_CD = {
   facility: {
     name: "ADCC Pilot Reference Facility",
     scale: "Pilot",
@@ -544,12 +544,14 @@ const evalRulesEl = document.getElementById("ccdEvalRules");
 /* 6. Scene setup                                                      */
 /* ================================================================== */
 
+const SCENE_SCALE = 3;
+
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x0f172a);
-scene.fog = new THREE.Fog(0x0f172a, 60, 140);
+scene.fog = new THREE.Fog(0x0f172a, 60 * SCENE_SCALE, 140 * SCENE_SCALE);
 
-const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 500);
-camera.position.set(34, 28, 36);
+const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 500 * SCENE_SCALE);
+camera.position.set(34 * SCENE_SCALE, 28 * SCENE_SCALE, 36 * SCENE_SCALE);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -560,9 +562,9 @@ canvasShell.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.08;
-controls.target.set(0, 2, 0);
-controls.minDistance = 12;
-controls.maxDistance = 110;
+controls.target.set(0, 2 * SCENE_SCALE, 0);
+controls.minDistance = 12 * SCENE_SCALE;
+controls.maxDistance = 110 * SCENE_SCALE;
 controls.maxPolarAngle = Math.PI * 0.49;
 
 const hemi = new THREE.HemisphereLight(0xa5b4fc, 0x1f2937, 0.7);
@@ -572,21 +574,21 @@ const sun = new THREE.DirectionalLight(0xffffff, 1.05);
 sun.position.set(28, 36, 22);
 sun.castShadow = true;
 sun.shadow.mapSize.set(1024, 1024);
-sun.shadow.camera.left = -50;
-sun.shadow.camera.right = 50;
-sun.shadow.camera.top = 50;
-sun.shadow.camera.bottom = -50;
+sun.shadow.camera.left = -50 * SCENE_SCALE;
+sun.shadow.camera.right = 50 * SCENE_SCALE;
+sun.shadow.camera.top = 50 * SCENE_SCALE;
+sun.shadow.camera.bottom = -50 * SCENE_SCALE;
 scene.add(sun);
 
 const ground = new THREE.Mesh(
-  new THREE.PlaneGeometry(120, 120),
+  new THREE.PlaneGeometry(120 * SCENE_SCALE, 120 * SCENE_SCALE),
   new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.9, metalness: 0.0 })
 );
 ground.rotation.x = -Math.PI / 2;
 ground.receiveShadow = true;
 scene.add(ground);
 
-const grid = new THREE.GridHelper(120, 60, 0x334155, 0x1f2937);
+const grid = new THREE.GridHelper(120 * SCENE_SCALE, 60, 0x334155, 0x1f2937);
 grid.position.y = 0.01;
 scene.add(grid);
 
@@ -1136,7 +1138,7 @@ function createEquipmentMesh(equipment) {
 }
 
 /* ================================================================== */
-/* 13. Apply CCD payload                                               */
+/* 13. Apply CD payload                                               */
 /* ================================================================== */
 
 function applyCcdPayload(payload, { animate = true, scenarioLabel = "" } = {}) {
@@ -1219,13 +1221,37 @@ function applyCcdPayload(payload, { animate = true, scenarioLabel = "" } = {}) {
 /* 14. Build payload from form                                         */
 /* ================================================================== */
 
+function scaleFacility(facility, s) {
+  if (!facility || s === 1) return;
+  const scaleTriplet = (arr) => arr.map((v) => v * s);
+  if (Array.isArray(facility.footprintMeters)) {
+    facility.footprintMeters = facility.footprintMeters.map((v) => v * s);
+  }
+  (facility.areas ?? []).forEach((a) => {
+    if (Array.isArray(a.position)) a.position = scaleTriplet(a.position);
+    if (Array.isArray(a.size)) a.size = scaleTriplet(a.size);
+    if (a.airflow) {
+      if (Array.isArray(a.airflow.supplyPoints)) {
+        a.airflow.supplyPoints = a.airflow.supplyPoints.map(scaleTriplet);
+      }
+      if (Array.isArray(a.airflow.returnPoints)) {
+        a.airflow.returnPoints = a.airflow.returnPoints.map(scaleTriplet);
+      }
+    }
+  });
+  (facility.equipment ?? []).forEach((e) => {
+    if (Array.isArray(e.position)) e.position = scaleTriplet(e.position);
+    if (Array.isArray(e.size)) e.size = scaleTriplet(e.size);
+  });
+}
+
 function buildPayloadFromForm() {
   const formData = new FormData(form);
   const totalArea = Number(formData.get("totalArea")) || 1200;
   const facilityScale = formData.get("facilityScale") || "Pilot";
   const cleanroomGrade = formData.get("cleanroomGrade") || "Grade C";
   const processType = formData.get("processType") || "adc";
-  const projectName = formData.get("projectName") || "Untitled CCD";
+  const projectName = formData.get("projectName") || "Untitled CD";
   const scenario = formData.get("scenario") || "recommended";
   const bioreactorCount = Math.max(1, Math.min(6, Number(formData.get("bioreactorCount")) || 2));
   const includeFill = form.includeFill.checked;
@@ -1237,7 +1263,7 @@ function buildPayloadFromForm() {
   const widthM = Math.round(Math.sqrt(totalArea * aspect));
   const depthM = Math.round(totalArea / widthM);
 
-  const payload = structuredClone(SAMPLE_CCD);
+  const payload = structuredClone(SAMPLE_CD);
   payload.facility.name = projectName;
   payload.facility.scale = facilityScale;
   payload.facility.cleanroomGrade = cleanroomGrade;
@@ -1245,7 +1271,7 @@ function buildPayloadFromForm() {
   payload.facility.footprintMeters = [widthM, depthM];
 
   // Bioreactor count adjustment
-  const baseEquipment = SAMPLE_CCD.facility.equipment.filter((item) => item.type !== "Bioreactor");
+  const baseEquipment = SAMPLE_CD.facility.equipment.filter((item) => item.type !== "Bioreactor");
   const bioreactors = [];
   for (let i = 0; i < bioreactorCount; i += 1) {
     const isProduction = i % 2 === 1;
@@ -1320,6 +1346,9 @@ function buildPayloadFromForm() {
   const preset = SCENARIO_PRESETS[scenario] ?? SCENARIO_PRESETS.recommended;
   preset.apply(payload.facility);
 
+  // Scale up to commercial-scale footprint for demo presentation
+  scaleFacility(payload.facility, SCENE_SCALE);
+
   return { payload, scenarioLabel: preset.label };
 }
 
@@ -1363,4 +1392,4 @@ replayButton.addEventListener("click", handleReplay);
 resetButton.addEventListener("click", handleReset);
 
 // Initial JSON preview (no scene yet — user must press the button)
-jsonBlock.textContent = JSON.stringify(SAMPLE_CCD, null, 2);
+jsonBlock.textContent = JSON.stringify(SAMPLE_CD, null, 2);

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BioForge CCD Studio · 3D Conceptual Viewer</title>
+    <title>BioForge CD Studio · 3D Conceptual Viewer</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link
       rel="stylesheet"
@@ -26,12 +26,12 @@
       <header class="topbar">
         <a class="brand" href="./index.html">
           <span class="brand-mark">BF</span>
-          <span>BioForge CCD Studio</span>
+          <span>BioForge CD Studio</span>
         </a>
         <nav class="nav">
           <a href="./index.html">홈</a>
           <a href="./workspace.html">입력 워크스페이스</a>
-          <a href="./ccd-viewer.html" class="nav-cta">3D CCD 뷰어</a>
+          <a href="./ccd-viewer.html" class="nav-cta">3D CD 뷰어</a>
           <a href="./facility-layout/" title="facility-layout-app · npm run dev 후 접속" target="_blank" rel="noopener">Layout Test ↗</a>
         </nav>
       </header>
@@ -39,12 +39,12 @@
       <main class="workspace-main">
         <section class="workspace-header workspace-hero-card">
           <div>
-            <p class="eyebrow">ADCC CCD PAGE · 3D CONCEPTUAL DESIGN VIEWER</p>
+            <p class="eyebrow">ADCC CD PAGE · 3D CONCEPTUAL DESIGN VIEWER</p>
             <h1>설계 파라미터를 입력하면 3D 개념 설계가 즉시 솟아오릅니다.</h1>
             <p>
-              ISPE Baseline Guide Vol 6의 시설 구역(Area)과 주요 설비(Equipment) 구조를 따르는 CCD JSON을
+              ISPE Baseline Guide Vol 6의 시설 구역(Area)과 주요 설비(Equipment) 구조를 따르는 CD JSON을
               Three.js 캔버스에 시각화합니다. 마우스로 회전·줌인/아웃이 가능하며, 향후 LLM이 생성한
-              CCD 응답을 그대로 입력해 렌더링할 수 있도록 설계되었습니다.
+              CD 응답을 그대로 입력해 렌더링할 수 있도록 설계되었습니다.
             </p>
           </div>
           <div class="status-card ccd-status-card">
@@ -64,7 +64,7 @@
               <button id="ccdResetButton" class="ghost-button" type="button">기본값 복원</button>
             </div>
             <p class="panel-copy">
-              면적과 공정 타입 같은 핵심 파라미터로 CCD 시드를 만든 뒤, 서버나 LLM에 보낼 payload의 기준이
+              면적과 공정 타입 같은 핵심 파라미터로 CD 시드를 만든 뒤, 서버나 LLM에 보낼 payload의 기준이
               되는 JSON을 즉석에서 갱신합니다.
             </p>
 
@@ -210,7 +210,7 @@
             </div>
             <p class="panel-copy">
               현재 배치를 4개 룰(압력 캐스케이드 / Grade 인접성 / 설비 밀도 / HEPA ACH)로 채점합니다.
-              실제 GMP 검증이 아니라 CCD 단계의 sanity check 수준이며, 점수는 의사결정 보조 용도입니다.
+              실제 GMP 검증이 아니라 CD 단계의 sanity check 수준이며, 점수는 의사결정 보조 용도입니다.
             </p>
 
             <div class="ccd-eval-layout">
@@ -244,7 +244,7 @@
             <div class="panel-heading">
               <div>
                 <p class="eyebrow">STEP 4</p>
-                <h2>CCD JSON 미리보기</h2>
+                <h2>CD JSON 미리보기</h2>
               </div>
               <span class="doc-chip">LLM 응답 호환 스키마 · airflow / pressure 포함</span>
             </div>

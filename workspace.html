@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BioForge CCD Studio Workspace</title>
+    <title>BioForge CD Studio Workspace</title>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link
       rel="stylesheet"
@@ -18,29 +18,29 @@
       <header class="topbar">
         <a class="brand" href="./index.html">
           <span class="brand-mark">BF</span>
-          <span>BioForge CCD Studio</span>
+          <span>BioForge CD Studio</span>
         </a>
         <nav class="nav">
           <a href="./index.html">홈</a>
           <a href="#result">결과 미리보기</a>
-          <a href="./ccd-viewer.html">3D CCD 뷰어</a>
-          <a href="./workspace.html" class="nav-cta">CCD 생성 화면</a>
+          <a href="./ccd-viewer.html">3D CD 뷰어</a>
+          <a href="./workspace.html" class="nav-cta">CD 생성 화면</a>
         </nav>
       </header>
 
       <main class="workspace-main">
         <section class="workspace-header workspace-hero-card">
           <div>
-            <p class="eyebrow">CCD PACKAGE BUILDER</p>
-            <h1>본인 기관에 맞는 데이터를 입력해 효율적으로 CCD를 받아보세요</h1>
+            <p class="eyebrow">CD PACKAGE BUILDER</p>
+            <h1>본인 기관에 맞는 데이터를 입력해 효율적으로 CD를 받아보세요</h1>
             <p>
               현재 버전은 다중 시트 입력과 서버 전송 흐름을 검증하기 위한 데모입니다. 업로드된 워크북을
-              3개 핵심 시트 구조로 축약하고, 서버 응답을 가정한 CCD 개념설계 패키지 문서 화면을 생성합니다.
+              3개 핵심 시트 구조로 축약하고, 서버 응답을 가정한 CD 개념설계 패키지 문서 화면을 생성합니다.
             </p>
           </div>
           <div class="status-card">
             <span>Prototype Mode</span>
-            <strong>Three-sheet workbook to server-driven CCD package demo.</strong>
+            <strong>Three-sheet workbook to server-driven CD package demo.</strong>
           </div>
         </section>
 
@@ -149,7 +149,7 @@
                 </label>
                 <label>
                   <span>목표 산출물</span>
-                  <input name="targetOutput" type="text" placeholder="예: CCD package + utility summary" />
+                  <input name="targetOutput" type="text" placeholder="예: CD package + utility summary" />
                 </label>
               </div>
 
@@ -221,7 +221,7 @@
               </div>
               <div>
                 <span class="meta-label">서버 payload</span>
-                <strong>Workbook JSON + CCD package request</strong>
+                <strong>Workbook JSON + CD package request</strong>
               </div>
             </div>
           </article>
@@ -230,20 +230,20 @@
             <div class="panel-heading">
               <div>
                 <p class="eyebrow">STEP 4</p>
-                <h2>서버 전송 및 CCD 패키지 생성</h2>
+                <h2>서버 전송 및 CD 패키지 생성</h2>
               </div>
               <button id="generateButton" class="button button-primary" type="button">서버로 전송 후 생성</button>
             </div>
 
             <div class="result-shell" id="resultShell">
               <div class="result-placeholder">
-                <h3>CCD 패키지 문서가 아직 생성되지 않았습니다.</h3>
+                <h3>CD 패키지 문서가 아직 생성되지 않았습니다.</h3>
                 <p>3개 시트 입력을 정리한 뒤 서버 전송을 실행하면 공정도, 문서, 장비 목록, 예산 요약이 출력됩니다.</p>
               </div>
             </div>
 
             <div class="result-actions">
-              <button id="downloadSummaryButton" class="ghost-button" type="button">CCD 문서 다운로드</button>
+              <button id="downloadSummaryButton" class="ghost-button" type="button">CD 문서 다운로드</button>
               <button id="downloadSheetButton" class="ghost-button" type="button">CSV 패키지 다운로드</button>
             </div>
           </article>

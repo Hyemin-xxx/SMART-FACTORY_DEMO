@@ -19,7 +19,7 @@ const sampleValues = {
   facilityScale: "Pilot",
   batchStrategy: "Fed-batch",
   cleanroomGrade: "Grade C",
-  targetOutput: "CCD package + process block summary + utility list + CAPEX snapshot",
+  targetOutput: "CD package + process block summary + utility list + CAPEX snapshot",
   includeUtilities: true,
   includeEquipment: true,
   includeSingleUse: true,
@@ -36,11 +36,11 @@ function buildWorkbookSheets(values) {
 
   return {
     projectOverview: [
-      { field: "Project Name", value: values.projectName || "", notes: "CCD package 표지 및 기본 식별 정보" },
+      { field: "Project Name", value: values.projectName || "", notes: "CD package 표지 및 기본 식별 정보" },
       { field: "Product Type", value: values.productType || "", notes: "예: mAb, ADC, vaccine, cell therapy" },
       { field: "Facility Scale", value: values.facilityScale || "Pilot", notes: "Pilot / Clinical / Commercial" },
       { field: "Cleanroom Grade", value: values.cleanroomGrade || "Grade C", notes: "핵심 공정구역 기준" },
-      { field: "Target Output", value: values.targetOutput || "", notes: "문서형 CCD 패키지 목표 범위" },
+      { field: "Target Output", value: values.targetOutput || "", notes: "문서형 CD 패키지 목표 범위" },
       { field: "Design Notes", value: values.designNotes || "", notes: "특이사항 및 design basis memo" }
     ],
     processDefinition: [
@@ -55,7 +55,7 @@ function buildWorkbookSheets(values) {
       },
       {
         field: "Server Request Context",
-        value: "Generate CCD conceptual package",
+        value: "Generate CD conceptual package",
         notes: "서버로 전송될 상위 패키지 생성 요청"
       }
     ],
@@ -128,7 +128,7 @@ function buildMermaidDiagram(payload) {
     `  ${singleUseNode} --> Harvest[Harvest / Clarification]`,
     "  Harvest --> DSP[Chromatography + UF/DF]",
     `  DSP --> ${automationNode}`,
-    "  DSP --> Docs[CCD Package Document]",
+    "  DSP --> Docs[CD Package Document]",
     "  DSP --> Equip[Equipment List]",
     "  DSP --> Budget[ROM Budget Summary]"
   ].join("\n");
@@ -305,7 +305,7 @@ function buildMermaidDiagramLocal(featureFlags) {
     `  ${singleUseNode} --> Harvest[Harvest / Clarification]`,
     "  Harvest --> DSP[Chromatography + UF/DF]",
     `  DSP --> ${automationNode}`,
-    "  DSP --> Docs[CCD Package Document]",
+    "  DSP --> Docs[CD Package Document]",
     "  DSP --> Equip[Equipment List]",
     "  DSP --> Budget[ROM Budget Summary]"
   ].join("\n");
@@ -338,11 +338,11 @@ function buildCcdPackageLocal(payload) {
   const documentSections = [
     {
       title: "1. Design Basis Summary",
-      body: `${project.projectName || "Untitled Project"}는 ${project.facilityScale || "Pilot"} 규모의 ${project.productType || "bioprocess product"} 생산을 목표로 하며, ${project.batchStrategy || "Fed-batch"} 전략과 ${project.cleanroomGrade || "Grade C"} 기준을 기반으로 CCD 개념설계를 수행합니다.`
+      body: `${project.projectName || "Untitled Project"}는 ${project.facilityScale || "Pilot"} 규모의 ${project.productType || "bioprocess product"} 생산을 목표로 하며, ${project.batchStrategy || "Fed-batch"} 전략과 ${project.cleanroomGrade || "Grade C"} 기준을 기반으로 CD 개념설계를 수행합니다.`
     },
     {
       title: "2. Input Workbook Summary",
-      body: `총 ${sheetCount}개 데모 시트가 전달되었고, Project Overview / Process Definition / Equipment & Cost 시트의 입력을 기반으로 문서형 CCD 패키지를 생성했습니다. 업로드된 워크북에서 ${wbSheetCount}개 시트를 감지했고, 앞선 시트명은 ${sheetNames} 입니다.`
+      body: `총 ${sheetCount}개 데모 시트가 전달되었고, Project Overview / Process Definition / Equipment & Cost 시트의 입력을 기반으로 문서형 CD 패키지를 생성했습니다. 업로드된 워크북에서 ${wbSheetCount}개 시트를 감지했고, 앞선 시트명은 ${sheetNames} 입니다.`
     },
     {
       title: "3. Process Concept",
@@ -350,7 +350,7 @@ function buildCcdPackageLocal(payload) {
     },
     {
       title: "4. Deliverables",
-      body: "개념 공정도, CCD conceptual document, equipment list, ROM budget summary, open items register, next-step action proposal을 포함합니다."
+      body: "개념 공정도, CD conceptual document, equipment list, ROM budget summary, open items register, next-step action proposal을 포함합니다."
     }
   ];
 
@@ -364,8 +364,8 @@ function buildCcdPackageLocal(payload) {
   const pad = (n) => String(n).padStart(2, "0");
 
   return {
-    packageTitle: `${project.projectName || "Untitled Project"} CCD Conceptual Design Package`,
-    requestId: `CCD-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`,
+    packageTitle: `${project.projectName || "Untitled Project"} CD Conceptual Design Package`,
+    requestId: `CD-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`,
     generatedAt: `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`,
     responseMode: "Client-side Demo Mode",
     mermaid: buildMermaidDiagramLocal(featureFlags),
@@ -391,7 +391,7 @@ function buildServerPayload(form, workbookSheets, activeFile) {
       facilityScale: formData.get("facilityScale") || "Pilot",
       batchStrategy: formData.get("batchStrategy") || "Fed-batch",
       cleanroomGrade: formData.get("cleanroomGrade") || "Grade C",
-      targetOutput: formData.get("targetOutput") || "CCD package",
+      targetOutput: formData.get("targetOutput") || "CD package",
       designNotes: formData.get("designNotes") || ""
     },
     featureFlags: {
@@ -528,7 +528,7 @@ function initWorkspacePage() {
       <div class="result-loading">
         <div class="loading-orb" aria-hidden="true"></div>
         <h3>서버로 입력 워크북을 전송하는 중입니다...</h3>
-        <p>3개 시트 payload를 기준으로 CCD 개념설계 패키지, 공정도, 장비 목록, 예산 요약을 생성합니다.</p>
+        <p>3개 시트 payload를 기준으로 CD 개념설계 패키지, 공정도, 장비 목록, 예산 요약을 생성합니다.</p>
       </div>
     `;
   }
@@ -576,7 +576,7 @@ function initWorkspacePage() {
       <div class="result-layout result-layout-docs">
         <section class="result-banner">
           <div>
-            <p class="eyebrow">SERVER GENERATED CCD PACKAGE</p>
+            <p class="eyebrow">SERVER GENERATED CD PACKAGE</p>
             <h3>${escapeHtml(response.packageTitle)}</h3>
             <p>Request ${escapeHtml(response.requestId)} · ${escapeHtml(response.generatedAt)}</p>
           </div>
@@ -614,7 +614,7 @@ function initWorkspacePage() {
 
         <section class="result-card document-card">
           <div class="result-card-heading">
-            <h3>CCD Conceptual Design Document</h3>
+            <h3>CD Conceptual Design Document</h3>
             <span class="doc-chip">Docs-style preview</span>
           </div>
           <div class="document-sections">
