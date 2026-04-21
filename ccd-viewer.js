@@ -1148,7 +1148,7 @@ function applyCdPayload(payload, { animate = true } = {}) {
   statusParts.push(`${facility.processType ?? "—"} 공정`);
   statusMeta.textContent = statusParts.join(" · ");
 
-  jsonBlock.textContent = JSON.stringify(payload, null, 2);
+  if (jsonBlock) jsonBlock.textContent = JSON.stringify(payload, null, 2);
 }
 
 /* ------------------------------------------------------------------ */
@@ -1311,4 +1311,4 @@ generateButton.addEventListener("click", handleGenerate);
 replayButton.addEventListener("click", handleReplay);
 resetButton.addEventListener("click", handleReset);
 
-jsonBlock.textContent = JSON.stringify(SAMPLE_CD, null, 2);
+if (jsonBlock) jsonBlock.textContent = JSON.stringify(SAMPLE_CD, null, 2);

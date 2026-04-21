@@ -865,6 +865,35 @@ function initWorkspacePage() {
   const agentOverallFill = document.getElementById("agentOverallFill");
   const agentOverallPercent = document.getElementById("agentOverallPercent");
   const agentProgressCopy = document.getElementById("agentProgressCopy");
+  const terminalLogEl = document.getElementById("terminalLog");
+  const terminalLogBodyEl = document.getElementById("terminalLogBody");
+  const terminalLogBadgeEl = document.getElementById("terminalLogBadge");
+
+  function formatLogTimestamp() {
+    const d = new Date();
+    const pad = (n) => String(n).padStart(2, "0");
+    return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+
+  function appendTerminalLine(text, level = "info") {
+    if (!terminalLogBodyEl) return;
+    const line = document.createElement("span");
+    line.className = "terminal-log-line";
+    line.dataset.level = level;
+    line.innerHTML = `<span class="terminal-log-ts">[${formatLogTimestamp()}]</span>${escapeHtml(text)}\n`;
+    terminalLogBodyEl.appendChild(line);
+    terminalLogBodyEl.scrollTop = terminalLogBodyEl.scrollHeight;
+  }
+
+  function resetTerminal() {
+    if (terminalLogBodyEl) terminalLogBodyEl.innerHTML = "";
+  }
+
+  function setTerminalBadge(state, text) {
+    if (!terminalLogBadgeEl) return;
+    terminalLogBadgeEl.dataset.state = state;
+    terminalLogBadgeEl.textContent = text;
+  }
 
   function renderAgentCards() {
     agentGridEl.innerHTML = AGENT_DEFINITIONS.map((agent) => `
@@ -909,6 +938,13 @@ function initWorkspacePage() {
       agentProgressCopy.textContent = "서버에 요청을 보낸 직후, 각 모듈이 어떤 단계에 있는지 실시간으로 표시합니다.";
     }
 
+    if (terminalLogEl) terminalLogEl.hidden = false;
+    resetTerminal();
+    setTerminalBadge("running", "RUNNING");
+    appendTerminalLine("$ cd-pipeline run --profile=demo", "prompt");
+    appendTerminalLine("server: POST /api/cd-package", "run");
+    appendTerminalLine(`booting ${AGENT_DEFINITIONS.length} agents...`, "info");
+
     const progressMap = {};
     AGENT_DEFINITIONS.forEach((a) => { progressMap[a.id] = 0; });
     updateOverall(progressMap);
@@ -925,6 +961,8 @@ function initWorkspacePage() {
         setTimeout(() => {
           if (cancelled) { resolve(); return; }
           const begin = Date.now();
+          let lastStepIdx = -1;
+          appendTerminalLine(`[${agent.id}] spawn  · ${agent.name}`, "run");
           const interval = setInterval(() => {
             if (cancelled) { clearInterval(interval); resolve(); return; }
             const elapsed = Date.now() - begin;
@@ -937,6 +975,10 @@ function initWorkspacePage() {
             progressMap[agent.id] = percent;
             setAgentState(agent, percent, "진행중", agent.steps[stepIdx], "running");
             updateOverall(progressMap);
+            if (stepIdx !== lastStepIdx) {
+              appendTerminalLine(`[${agent.id}] ${agent.steps[stepIdx]}`, "run");
+              lastStepIdx = stepIdx;
+            }
             if (ratio >= 0.95) {
               clearInterval(interval);
               resolve();
@@ -955,12 +997,16 @@ function initWorkspacePage() {
         AGENT_DEFINITIONS.forEach((agent) => {
           progressMap[agent.id] = 100;
           setAgentState(agent, 100, "완료", agent.steps[agent.steps.length - 1], "done");
+          appendTerminalLine(`[${agent.id}] done · ${agent.steps[agent.steps.length - 1]}`, "ok");
         });
         updateOverall(progressMap);
         const elapsedSec = ((Date.now() - startedAt) / 1000).toFixed(1);
         if (agentProgressCopy) {
           agentProgressCopy.textContent = `모든 에이전트가 ${elapsedSec}초 만에 작업을 마쳤습니다.`;
         }
+        appendTerminalLine(`pipeline complete in ${elapsedSec}s · package ready`, "ok");
+        appendTerminalLine("$", "prompt");
+        setTerminalBadge("done", "DONE");
       },
       fail() {
         cancelled = true;
@@ -975,6 +1021,8 @@ function initWorkspacePage() {
         if (agentProgressCopy) {
           agentProgressCopy.textContent = "서버 연결에 실패해 파이프라인이 중단되었습니다.";
         }
+        appendTerminalLine("pipeline aborted · server request failed", "error");
+        setTerminalBadge("error", "FAILED");
       }
     };
   }
