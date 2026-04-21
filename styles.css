@@ -1020,7 +1020,7 @@ body[data-page="home"] * {
 body[data-page="home"] .page-shell-home {
   position: relative;
   z-index: 1;
-  width: min(1920px, calc(100% - 48px));
+  width: min(1440px, calc(100% - 32px));
   margin-inline: auto;
   padding: 18px 0 72px;
 }
@@ -1730,7 +1730,7 @@ body[data-page="home"] .preview-window {
   position: relative;
   z-index: 1;
   overflow: hidden;
-  width: 120%;
+  width: 150%;
   max-width: none;
   border: 1px solid var(--home-border);
   border-radius: 28px;
