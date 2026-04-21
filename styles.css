@@ -2451,6 +2451,47 @@ body[data-page="ccd-viewer"] .doc-chip {
   background: #ef4444;
 }
 
+.swatch-status-ok {
+  background: rgba(96, 165, 250, 0.45);
+  border-color: rgba(96, 165, 250, 0.85);
+  box-shadow: inset 0 0 0 2px rgba(96, 165, 250, 0.9);
+}
+
+.swatch-status-caution {
+  background: rgba(251, 191, 36, 0.35);
+  border-color: rgba(251, 191, 36, 0.9);
+  box-shadow: inset 0 0 0 2px rgba(251, 191, 36, 0.95);
+}
+
+.swatch-status-risk {
+  background: rgba(239, 68, 68, 0.35);
+  border-color: rgba(239, 68, 68, 0.9);
+  box-shadow: inset 0 0 0 2px rgba(239, 68, 68, 0.95);
+}
+
+.swatch-hvac {
+  background: #64748b;
+  border-color: rgba(30, 41, 59, 0.6);
+}
+
+.swatch-cascade {
+  background: linear-gradient(90deg, #0ea5e9 0%, #7dd3fc 100%);
+  border-color: rgba(14, 116, 144, 0.6);
+}
+
+.ccd-legend h4 {
+  margin: 16px 0 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--ccd-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ccd-legend h4:first-child {
+  margin-top: 0;
+}
+
 .ccd-canvas-panel {
   display: flex;
   flex-direction: column;
