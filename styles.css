@@ -1021,6 +1021,7 @@ body[data-page="home"] .page-shell-home {
   position: relative;
   z-index: 1;
   width: min(1440px, calc(100% - 32px));
+  margin-inline: auto;
   padding: 18px 0 72px;
 }
 
